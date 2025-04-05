@@ -1,0 +1,567 @@
+[
+    {
+        "title": "Lớp 1",
+        "cheatsheets": [
+            {
+                "name": "Toán - Số học cơ bản",
+                "headers": [
+                    {
+                        "title": "Nhận diện số chẵn, số lẻ và số tròn chục",
+                        "contents": [
+                            {
+                                "text": "Số lẻ: Những con số không chia hết cho 2. Ví dụ: 1, 3, 5, 7…"
+                            },
+                            {
+                                "text": "Số chẵn: Những con số chia hết cho 2. Ví dụ: 2, 4, 6, 8…"
+                            },
+                            {
+                                "text": "Số tròn chục: Các số chia hết cho 10, thường có đuôi là 0. Ví dụ: 10, 20, 30, 40…"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "So sánh các số trong phạm vi 10",
+                        "contents": [
+                            {
+                                "text": "Số A lớn hơn số B nếu A > B"
+                            },
+                            {
+                                "text": "Số A bé hơn số B nếu A < B"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Sắp xếp các số",
+                        "contents": [
+                            {
+                                "text": "Sắp xếp giảm dần: Đặt các số theo thứ tự từ lớn nhất đến nhỏ nhất. Ví dụ: 9, 7, 5, 3, 1."
+                            },
+                            {
+                                "text": "Sắp xếp tăng dần: Đặt các số theo thứ tự từ nhỏ nhất đến lớn nhất. Ví dụ: 1, 3, 5, 7, 9."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Bảng cửu chương",
+                "headers": [
+                    {
+                        "title": "Bảng cửu chương 1",
+                        "contents": [
+                            { "text": "1 + 1 = 2" },
+                            { "text": "1 + 2 = 3" },
+                            { "text": "1 + 3 = 4" },
+                            { "text": "1 + 4 = 5" },
+                            { "text": "1 + 5 = 6" },
+                            { "text": "1 + 6 = 7" },
+                            { "text": "1 + 7 = 8" },
+                            { "text": "1 + 8 = 9" },
+                            { "text": "1 + 9 = 10" }
+                        ]
+                    },
+                    {
+                        "title": "Bảng cửu chương 2",
+                        "contents": [
+                            { "text": "2 + 1 = 3" },
+                            { "text": "2 + 2 = 4" },
+                            { "text": "2 + 3 = 5" },
+                            { "text": "2 + 4 = 6" },
+                            { "text": "2 + 5 = 7" },
+                            { "text": "2 + 6 = 8" },
+                            { "text": "2 + 7 = 9" },
+                            { "text": "2 + 8 = 10" }
+                        ]
+                    },
+                    {
+                        "title": "Bảng cửu chương 3",
+                        "contents": [
+                            { "text": "3 + 1 = 4" },
+                            { "text": "3 + 2 = 5" },
+                            { "text": "3 + 3 = 6" },
+                            { "text": "3 + 4 = 7" },
+                            { "text": "3 + 5 = 8" },
+                            { "text": "3 + 6 = 9" },
+                            { "text": "3 + 7 = 10" }
+                        ]
+                    },
+                    {
+                        "title": "Bảng cửu chương 4",
+                        "contents": [
+                            { "text": "4 + 1 = 5" },
+                            { "text": "4 + 2 = 6" },
+                            { "text": "4 + 3 = 7" },
+                            { "text": "4 + 4 = 8" },
+                            { "text": "4 + 5 = 9" },
+                            { "text": "4 + 6 = 10" }
+                        ]
+                    },
+                    {
+                        "title": "Bảng cửu chương 5",
+                        "contents": [
+                            { "text": "5 + 1 = 6" },
+                            { "text": "5 + 2 = 7" },
+                            { "text": "5 + 3 = 8" },
+                            { "text": "5 + 4 = 9" },
+                            { "text": "5 + 5 = 10" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Các loại hình học",
+                "headers": [
+                    {
+                        "title": "Hình vuông",
+                        "contents": [
+                            {
+                                "text": "Hình vuông có 4 cạnh đều và 4 góc vuông"
+                            },
+                            {
+                                "text": "Cách tính diện tích và chu vi của hình vuông"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Hình tròn",
+                        "contents": [
+                            {
+                                "text": "Hình tròn có một đường tròn bao quanh và bán kính là khoảng cách từ tâm đến viền"
+                            },
+                            {
+                                "text": "Cách tính diện tích và chu vi của hình tròn"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Hình chữ nhật",
+                        "contents": [
+                            {
+                                "text": "Hình chữ nhật có 2 cặp cạnh đối diện song song và bằng nhau"
+                            },
+                            {
+                                "text": "Cách tính diện tích và chu vi của hình chữ nhật"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Các loại góc",
+                "headers": [
+                    {
+                        "title": "Góc vuông",
+                        "contents": [
+                            {
+                                "text": "Góc vuông có độ lớn là 90 độ"
+                            },
+                            {
+                                "text": "Góc vuông xuất hiện trong nhiều hình học cơ bản"
+                            }
+                        ],
+                        "image": {
+                            "path": "assets/images/angle/types.png",
+                            "x": 0.5,
+                            "y": 0.5,
+                            "width": 200,
+                            "height": 200,
+                            "rotation": 45
+                        }
+                    },
+                    {
+                        "title": "Góc nhọn",
+                        "contents": [
+                            {
+                                "text": "Góc nhọn có độ lớn nhỏ hơn 90 độ"
+                            },
+                            {
+                                "text": "Góc nhọn được tìm thấy trong các hình học phức tạp hơn"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Góc tù",
+                        "contents": [
+                            {
+                                "text": "Góc tù có độ lớn lớn hơn 90 độ"
+                            },
+                            {
+                                "text": "Góc tù thường gặp trong các hình tam giác không vuông"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Hằng đẳng thức đáng nhớ",
+                "headers": [
+                    {
+                        "title": "(a + b)^2 = a^2 + 2ab + b^2",
+                        "contents": [
+                            {
+                                "text": "Hằng đẳng thức này được sử dụng khi bình phương một tổng"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "(a - b)^2 = a^2 - 2ab + b^2",
+                        "contents": [
+                            {
+                                "text": "Hằng đẳng thức này áp dụng khi bình phương một hiệu"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "a^2 - b^2 = (a + b)(a - b)",
+                        "contents": [
+                            {
+                                "text": "Hằng đẳng thức này là công thức khai triển của phép trừ bình phương"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Phép cộng trong phạm vi 10",
+                "headers": [
+                    {
+                        "title": "Cộng với 1",
+                        "contents": [
+                            { "text": "1 + 1 = 2" },
+                            { "text": "2 + 1 = 3" },
+                            { "text": "3 + 1 = 4" },
+                            { "text": "4 + 1 = 5" },
+                            { "text": "5 + 1 = 6" }
+                        ]
+                    },
+                    {
+                        "title": "Cộng với 2",
+                        "contents": [
+                            { "text": "1 + 2 = 3" },
+                            { "text": "2 + 2 = 4" },
+                            { "text": "3 + 2 = 5" },
+                            { "text": "4 + 2 = 6" },
+                            { "text": "5 + 2 = 7" }
+                        ]
+                    },
+                    {
+                        "title": "Cộng với 3",
+                        "contents": [
+                            { "text": "1 + 3 = 4" },
+                            { "text": "2 + 3 = 5" },
+                            { "text": "3 + 3 = 6" },
+                            { "text": "4 + 3 = 7" },
+                            { "text": "5 + 3 = 8" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Phép trừ trong phạm vi 10",
+                "headers": [
+                    {
+                        "title": "Trừ đi 1",
+                        "contents": [
+                            { "text": "2 - 1 = 1" },
+                            { "text": "3 - 1 = 2" },
+                            { "text": "4 - 1 = 3" },
+                            { "text": "5 - 1 = 4" },
+                            { "text": "6 - 1 = 5" }
+                        ]
+                    },
+                    {
+                        "title": "Trừ đi 2",
+                        "contents": [
+                            { "text": "3 - 2 = 1" },
+                            { "text": "4 - 2 = 2" },
+                            { "text": "5 - 2 = 3" },
+                            { "text": "6 - 2 = 4" },
+                            { "text": "7 - 2 = 5" }
+                        ]
+                    },
+                    {
+                        "title": "Trừ đi 3",
+                        "contents": [
+                            { "text": "4 - 3 = 1" },
+                            { "text": "5 - 3 = 2" },
+                            { "text": "6 - 3 = 3" },
+                            { "text": "7 - 3 = 4" },
+                            { "text": "8 - 3 = 5" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Đo độ dài cơ bản",
+                "headers": [
+                    {
+                        "title": "Dùng gang tay",
+                        "contents": [
+                            { "text": "1 gang tay = chiều dài bàn tay" },
+                            { "text": "2 gang tay = dài hơn 1 gang" },
+                            { "text": "3 gang tay = dài hơn 2 gang" },
+                            { "text": "Bút chì dài 1 gang tay" },
+                            { "text": "Quyển sách dài 2 gang tay" }
+                        ]
+                    },
+                    {
+                        "title": "Dùng bước chân",
+                        "contents": [
+                            { "text": "1 bước chân = 1 lần bước" },
+                            { "text": "2 bước chân = dài hơn 1 bước" },
+                            { "text": "3 bước chân = dài hơn 2 bước" },
+                            { "text": "Bàn học dài 2 bước chân" },
+                            { "text": "Cửa lớp dài 3 bước chân" }
+                        ]
+                    },
+                    {
+                        "title": "So sánh độ dài",
+                        "contents": [
+                            { "text": "1 gang tay < 1 bước chân" },
+                            { "text": "2 gang tay > 1 gang tay" },
+                            { "text": "2 bước chân > 1 bước chân" },
+                            { "text": "Bút chì < quyển sách" },
+                            { "text": "Bàn học < cửa lớp" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Lớp 2",
+        "cheatsheets": [
+            {
+                "name": "Toán - Số học cơ bản",
+                "headers": [
+                    {
+                        "title": "Số đếm và số thứ tự",
+                        "contents": [
+                            {
+                                "text": "Học cách đếm số từ 1 đến 1000, đọc và viết số"
+                            },
+                            {
+                                "text": "Nhận diện số chẵn, số lẻ, số tròn chục, số tròn trăm"
+                            },
+                            {
+                                "text": "Thực hành số thứ tự trong dãy số"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "So sánh và sắp xếp số trong phạm vi 1000",
+                        "contents": [
+                            {
+                                "text": "So sánh số lớn hơn, số bé hơn, số bằng nhau"
+                            },
+                            {
+                                "text": "Sắp xếp các số theo thứ tự tăng dần, giảm dần"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+    {
+        "title": "Lớp 3",
+        "cheatsheets": [
+            {
+                "name": "Toán - Số học cơ bản",
+                "headers": [
+                    {
+                        "title": "Số tự nhiên và số thứ tự",
+                        "contents": [
+                            { "text": "Mở rộng phạm vi số đến 10.000" },
+                            {
+                                "text": "Đọc, viết, so sánh và sắp xếp số theo thứ tự"
+                            },
+                            {
+                                "text": "Nhận diện số chẵn, số lẻ, số tròn chục, tròn trăm, tròn nghìn"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Phép cộng, trừ, nhân, chia số tự nhiên",
+                        "contents": [
+                            {
+                                "text": "Thực hành cộng, trừ, nhân, chia số có nhiều chữ số"
+                            },
+                            {
+                                "text": "Vận dụng quy tắc tính toán và thứ tự thực hiện phép tính trong biểu thức"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Nhân, chia số có ba chữ số cho số có một chữ số",
+                        "contents": [
+                            {
+                                "text": "Thực hiện phép nhân, chia số có ba chữ số cho số có một chữ số"
+                            },
+                            { "text": "Áp dụng vào giải bài toán thực tế" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Giải bài toán có lời văn",
+                "headers": [
+                    {
+                        "title": "Giải toán có lời văn",
+                        "contents": [
+                            {
+                                "text": "Rèn luyện kỹ năng đọc, phân tích bài toán có lời văn"
+                            },
+                            {
+                                "text": "Xác định dữ kiện và phép tính phù hợp"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Lớp 4",
+        "cheatsheets": [
+            {
+                "name": "Toán - Số học nâng cao",
+                "headers": [
+                    {
+                        "title": "Số tự nhiên và phân số",
+                        "contents": [
+                            { "text": "Mở rộng phạm vi số đến 100.000" },
+                            {
+                                "text": "Đọc, viết, so sánh và sắp xếp số theo thứ tự"
+                            },
+                            {
+                                "text": "Giới thiệu khái niệm phân số và cách đọc, viết phân số"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Phép cộng, trừ, nhân, chia số tự nhiên",
+                        "contents": [
+                            {
+                                "text": "Thực hành cộng, trừ, nhân, chia số có nhiều chữ số"
+                            },
+                            {
+                                "text": "Tìm hiểu về quy tắc nhân, chia một số với 10, 100, 1.000"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Phép nhân và chia phân số",
+                        "contents": [
+                            {
+                                "text": "Học cách thực hiện phép nhân và chia hai phân số"
+                            },
+                            {
+                                "text": "Áp dụng quy tắc nghịch đảo khi chia phân số"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Giải bài toán có lời văn",
+                "headers": [
+                    {
+                        "title": "Giải bài toán có lời văn",
+                        "contents": [
+                            {
+                                "text": "Luyện tập cách phân tích bài toán và xác định phép tính thích hợp"
+                            },
+                            {
+                                "text": "Thực hành với các bài toán liên quan đến tỉ số, tổng - hiệu"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Lớp 5",
+        "cheatsheets": [
+            {
+                "name": "Toán - Số học nâng cao",
+                "headers": [
+                    {
+                        "title": "Số thập phân và phân số",
+                        "contents": [
+                            {
+                                "text": "Học cách đọc, viết, so sánh và quy đổi giữa số thập phân và phân số"
+                            },
+                            {
+                                "text": "Thực hành tính toán với số thập phân"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Phép cộng, trừ, nhân, chia số thập phân",
+                        "contents": [
+                            {
+                                "text": "Thực hành các phép tính cộng, trừ, nhân, chia với số thập phân"
+                            },
+                            {
+                                "text": "Áp dụng quy tắc làm tròn và tính nhẩm số thập phân"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Tỉ lệ và tỉ số",
+                        "contents": [
+                            {
+                                "text": "Giới thiệu khái niệm tỉ số, tỉ lệ phần trăm và cách tính toán trong các bài toán thực tế"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Giải bài toán có lời văn nâng cao",
+                "headers": [
+                    {
+                        "title": "Giải bài toán có lời văn nâng cao",
+                        "contents": [
+                            {
+                                "text": "Luyện tập giải các bài toán có lời văn phức tạp hơn liên quan đến nhiều phép tính kết hợp"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Hình học mở rộng",
+                "headers": [
+                    {
+                        "title": "Hình học mở rộng",
+                        "contents": [
+                            {
+                                "text": "Học cách tính diện tích và chu vi của các hình phức tạp như hình thang, hình bình hành, hình tròn"
+                            },
+                            {
+                                "text": "Giới thiệu khái niệm thể tích của hình hộp chữ nhật"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Quản lý tài chính cá nhân cơ bản",
+                "headers": [
+                    {
+                        "title": "Quản lý tài chính cá nhân cơ bản",
+                        "contents": [
+                            {
+                                "text": "Học cách tính toán chi tiêu, tiết kiệm và hiểu giá trị của tiền tệ trong cuộc sống hàng ngày"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
