@@ -1,14 +1,12 @@
 import { AUTO, Game } from "phaser";
-import GamePlayScene from "./scenes/GamePlayScene";
-import MenuContentScene from "./scenes/MenuContentScene";
-import DetailContentScene from "./scenes/DetailContentScene";
+import WorksheetScene from "./scenes/WorksheetScene";
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 1920,
-    height: 1080,
+    width: 900, // Kích thước theo thiết kế Figma
+    height: 1165,
     parent: "phaser-example",
     backgroundColor: "#FFFFFF",
     scale: {
@@ -33,7 +31,7 @@ const config: Phaser.Types.Core.GameConfig = {
             debugShowVelocity: false,
         },
     },
-    scene: [GamePlayScene, MenuContentScene, DetailContentScene],
+    scene: [WorksheetScene],
 };
 
 const StartGame = (parent: string) => {
