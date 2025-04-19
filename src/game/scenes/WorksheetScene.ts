@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import WorksheetController from "../controllers/WorksheetController";
 import WorksheetDTO from "../dto/WorksheetDTO";
 import ExerciseDTO from "../dto/ExerciseDTO";
+import QuestionDTO from "../dto/QuestionDTO";
 
 // Tải font Roboto từ Google Fonts
 const loadFont = () => {
@@ -16,13 +17,13 @@ export default class WorksheetScene extends Phaser.Scene {
     private worksheetController: WorksheetController;
     private worksheetContainer: Phaser.GameObjects.Container | null = null;
     private buttonContainer: Phaser.GameObjects.Container | null = null;
+    private worksheetHeight: number = 0; // Thêm thuộc tính để lưu chiều cao của khung
 
     constructor() {
         super({ key: "WorksheetScene" });
     }
 
     preload(): void {
-        // Tải font trước khi render
         loadFont();
     }
 
@@ -30,14 +31,12 @@ export default class WorksheetScene extends Phaser.Scene {
         this.worksheetController = new WorksheetController(this);
         this.createWorksheet();
 
-        // Tạo buttonContainer để chứa các nút (nằm ngoài phần được in)
         this.buttonContainer = this.add.container(0, 0);
 
-        // Thêm nút "Create Worksheet"
         const createButton = this.add
             .text(
-                this.scale.width - 350,
-                this.scale.height - 70,
+                this.scale.width * 0.78,
+                this.scale.height * 0.95,
                 "Create Worksheet",
                 {
                     fontFamily: "Roboto",
@@ -45,8 +44,8 @@ export default class WorksheetScene extends Phaser.Scene {
                     color: "#ffffff",
                     backgroundColor: "#4A90E2",
                     padding: { left: 20, right: 20, top: 10, bottom: 10 },
-                    fixedWidth: 160,
-                    fixedHeight: 49,
+                    fixedWidth: this.scale.width * 0.15,
+                    fixedHeight: this.scale.height * 0.04,
                     align: "center",
                 }
             )
@@ -54,28 +53,34 @@ export default class WorksheetScene extends Phaser.Scene {
             .setOrigin(0.5, 0.5)
             .on("pointerdown", () => this.createWorksheet());
 
-        // Thêm nút "Export"
         const exportButton = this.add
-            .text(this.scale.width - 170, this.scale.height - 70, "Export", {
+            .text(this.scale.width * 0.95, this.scale.height * 0.95, "Export", {
                 fontFamily: "Roboto",
                 fontSize: "18px",
                 color: "#ffffff",
                 backgroundColor: "#4A90E2",
                 padding: { left: 20, right: 20, top: 10, bottom: 10 },
-                fixedWidth: 160,
-                fixedHeight: 49,
+                fixedWidth: this.scale.width * 0.15,
+                fixedHeight: this.scale.height * 0.04,
                 align: "center",
             })
             .setInteractive()
             .setOrigin(0.5, 0.5)
             .on("pointerdown", () => this.worksheetController.exportToPDF());
 
-        // Thêm các nút vào buttonContainer
         this.buttonContainer.add([createButton, exportButton]);
     }
 
     public getWorksheetContainer(): Phaser.GameObjects.Container | null {
         return this.worksheetContainer;
+    }
+
+    public getButtonContainer(): Phaser.GameObjects.Container | null {
+        return this.buttonContainer;
+    }
+
+    public getWorksheetHeight(): number {
+        return this.worksheetHeight;
     }
 
     private createWorksheet(): void {
@@ -85,118 +90,125 @@ export default class WorksheetScene extends Phaser.Scene {
 
         this.worksheetContainer = this.add.container(0, 0);
 
-        let yOffset = 40;
+        let yOffset = this.scale.height * 0.03;
 
-        // Khai báo worksheet với kiểu WorksheetDTO
         const worksheet: WorksheetDTO =
             this.worksheetController.createWorksheet();
 
-        // Vẽ thông tin đầu trang
         this.drawHeader(yOffset);
-        yOffset += 100; // Tăng khoảng cách sau header
+        yOffset += this.scale.height * 0.08;
 
-        // Vẽ tiêu đề
         this.worksheetContainer.add(
             this.add
-                .text(this.scale.width / 2, yOffset, "EQUIVALENT RATIOS", {
+                .text(this.scale.width * 0.5, yOffset, "Equivalent Ratios", {
                     fontFamily: "Roboto",
-                    fontSize: "32px",
+                    fontSize: `${this.scale.width * 0.035}px`,
                     color: "#000",
                     fontStyle: "bold",
                 })
                 .setOrigin(0.5, 0)
         );
-        yOffset += 80; // Tăng khoảng cách sau tiêu đề
+        yOffset += this.scale.height * 0.05;
 
-        // Vẽ các bài tập
         worksheet.exercises.forEach((exercise: ExerciseDTO, index: number) => {
             yOffset = this.drawExercise(exercise, index + 1, yOffset);
-            yOffset += 60; // Tăng khoảng cách giữa các bài tập
+            if (index < worksheet.exercises.length - 1) {
+                yOffset += this.scale.height * 0.02;
+                this.drawHorizontalLine(yOffset);
+                yOffset += this.scale.height * 0.03;
+            }
         });
 
-        // Đảm bảo container nằm trong tầm nhìn
         this.worksheetContainer.setPosition(0, 0);
 
-        // Thêm border quanh phần được in
         const border = this.add.graphics();
         border.lineStyle(2, 0x000000, 1);
-        border.strokeRect(5, 5, this.scale.width - 10, yOffset + 20); // Chiều cao border bao gồm toàn bộ nội dung
+        border.strokeRect(
+            this.scale.width * 0.01,
+            this.scale.height * 0.01,
+            this.scale.width * 0.98,
+            yOffset + this.scale.height * 0.02
+        );
         this.worksheetContainer.add(border);
+
+        // Lưu chiều cao của khung
+        this.worksheetHeight = yOffset + this.scale.height * 0.02;
     }
 
     private drawHeader(yOffset: number): void {
-        const xStart = 70;
-        const labelWidth = 80;
-        const fieldWidth = 200;
-        const lineHeight = 24;
+        const xStart = this.scale.width * 0.15;
+        const labelWidth = this.scale.width * 0.1;
+        const fieldWidth = this.scale.width * 0.25;
+        const lineHeight = this.scale.height * 0.02;
 
-        // Name
         this.worksheetContainer!.add(
             this.add
                 .text(xStart, yOffset, "Name:", {
                     fontFamily: "Roboto",
-                    fontSize: "18px",
+                    fontSize: `${this.scale.width * 0.02}px`,
                     color: "#000",
                 })
                 .setOrigin(0, 0)
         );
         this.drawLine(xStart + labelWidth, yOffset + lineHeight, fieldWidth);
 
-        // Teacher
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    xStart + labelWidth + fieldWidth + 70,
+                    xStart + labelWidth + fieldWidth + this.scale.width * 0.05,
                     yOffset,
-                    "Teacher:",
+                    "Score:",
                     {
                         fontFamily: "Roboto",
-                        fontSize: "18px",
+                        fontSize: `${this.scale.width * 0.02}px`,
                         color: "#000",
                     }
                 )
                 .setOrigin(0, 0)
         );
         this.drawLine(
-            xStart + labelWidth * 2 + fieldWidth + 70,
+            xStart + labelWidth * 2 + fieldWidth + this.scale.width * 0.05,
             yOffset + lineHeight,
             fieldWidth
         );
 
-        // Score
-        this.worksheetContainer!.add(
-            this.add
-                .text(xStart, yOffset + lineHeight + 10, "Score:", {
-                    fontFamily: "Roboto",
-                    fontSize: "18px",
-                    color: "#000",
-                })
-                .setOrigin(0, 0)
-        );
-        this.drawLine(
-            xStart + labelWidth,
-            yOffset + lineHeight * 2 + 10,
-            fieldWidth
-        );
-
-        // Date
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    xStart + labelWidth + fieldWidth + 70,
-                    yOffset + lineHeight + 10,
-                    "Date:",
+                    xStart,
+                    yOffset + lineHeight + this.scale.height * 0.01,
+                    "Teacher:",
                     {
                         fontFamily: "Roboto",
-                        fontSize: "18px",
+                        fontSize: `${this.scale.width * 0.02}px`,
                         color: "#000",
                     }
                 )
                 .setOrigin(0, 0)
         );
         this.drawLine(
-            xStart + labelWidth * 2 + fieldWidth + 70,
-            yOffset + lineHeight * 2 + 10,
+            xStart + labelWidth,
+            yOffset + lineHeight * 2 + this.scale.height * 0.01,
+            fieldWidth
+        );
+
+        this.worksheetContainer!.add(
+            this.add
+                .text(
+                    xStart + labelWidth + fieldWidth + this.scale.width * 0.05,
+                    yOffset + lineHeight + this.scale.height * 0.01,
+                    "Date:",
+                    {
+                        fontFamily: "Roboto",
+                        fontSize: `${this.scale.width * 0.02}px`,
+                        color: "#000",
+                    }
+                )
+                .setOrigin(0, 0)
+        );
+        this.drawLine(
+            xStart + labelWidth * 2 + fieldWidth + this.scale.width * 0.05,
+            yOffset + lineHeight * 2 + this.scale.height * 0.01,
             fieldWidth
         );
     }
@@ -206,150 +218,365 @@ export default class WorksheetScene extends Phaser.Scene {
         exerciseNumber: number,
         yOffset: number
     ): number {
-        // Vẽ tiêu đề bài tập
         this.worksheetContainer!.add(
             this.add
-                .text(70, yOffset, `${exerciseNumber}. ${exercise.title}`, {
-                    fontFamily: "Roboto",
-                    fontSize: "20px",
-                    color: "#000",
-                    fontStyle: "bold",
-                })
+                .text(
+                    this.scale.width * 0.05,
+                    yOffset,
+                    `${exerciseNumber}. ${exercise.getTitle()}`,
+                    {
+                        fontFamily: "Roboto",
+                        fontSize: `${this.scale.width * 0.025}px`,
+                        color: "#000",
+                        fontStyle: "bold",
+                    }
+                )
                 .setOrigin(0, 0)
         );
-        yOffset += 50; // Tăng khoảng cách sau tiêu đề bài tập
+        yOffset += this.scale.height * 0.04;
 
-        let maxYOffset = yOffset; // Theo dõi yOffset lớn nhất để tránh chồng lấn
+        let maxYOffset = yOffset;
 
-        // Vẽ các câu hỏi
-        exercise.questions.forEach((question, index) => {
-            if (question.type === "table") {
-                // Bài 1: Bảng 2x2
-                const tableWidth = 70;
-                const tableHeight = 70;
-                const xStart = 70 + (index % 3) * 250; // Căn chỉnh đều các bảng
-                const yStart = yOffset + Math.floor(index / 3) * 120;
+        exercise.questions.forEach((question: QuestionDTO, index: number) => {
+            if (question.getType() === "table") {
+                const tableWidth = this.scale.width * 0.05;
+                const tableHeight = this.scale.height * 0.03;
+                const xStart =
+                    this.scale.width * 0.05 +
+                    (index % 3) * this.scale.width * 0.25;
+                const yStart =
+                    yOffset + Math.floor(index / 3) * this.scale.height * 0.08;
 
                 this.worksheetContainer!.add(
                     this.add
-                        .text(xStart - 30, yStart, `${index + 1})`, {
-                            fontFamily: "Roboto",
-                            fontSize: "18px",
-                            color: "#000",
-                        })
+                        .text(
+                            xStart - this.scale.width * 0.03,
+                            yStart,
+                            `${index + 1})`,
+                            {
+                                fontFamily: "Roboto",
+                                fontSize: `${this.scale.width * 0.02}px`,
+                                color: "#000",
+                            }
+                        )
                         .setOrigin(0, 0)
                 );
 
-                // Bảng 1
-                this.drawTable(
-                    xStart,
-                    yStart,
-                    tableWidth,
-                    tableHeight,
-                    question.table1!
-                );
-                // Bảng 2
-                this.drawTable(
-                    xStart + 120,
-                    yStart,
-                    tableWidth,
-                    tableHeight,
-                    question.table2!
-                );
+                const tableData = question.getTable();
+                if (tableData) {
+                    this.drawTable3x2(
+                        xStart,
+                        yStart,
+                        tableWidth,
+                        tableHeight,
+                        tableData
+                    );
+                } else {
+                    console.warn(
+                        `Table data is undefined for question ${index + 1}`
+                    );
+                }
 
-                // Cập nhật yOffset lớn nhất
-                const tableSectionHeight = yStart + tableHeight + 20;
+                const tableSectionHeight =
+                    yStart + tableHeight + this.scale.height * 0.02;
                 maxYOffset = Math.max(maxYOffset, tableSectionHeight);
 
                 if (index % 3 === 2) {
-                    yOffset += 120; // Tăng yOffset sau mỗi hàng 3 bảng
+                    yOffset += this.scale.height * 0.08;
                 }
-            } else if (question.type === "ratio") {
-                // Bài 2: Tỷ lệ
-                const xStart = 70;
-                const yStart = yOffset + index * 50; // Tăng khoảng cách giữa các câu hỏi
+            } else if (question.getType() === "fraction") {
+                const xStart =
+                    this.scale.width * 0.05 +
+                    (index % 3) * this.scale.width * 0.25;
+                const yStart =
+                    yOffset + Math.floor(index / 3) * this.scale.height * 0.05;
 
-                this.worksheetContainer!.add(
-                    this.add
-                        .text(
-                            xStart,
-                            yStart,
-                            `${index + 7}) ${question.ratio1} ______ ${
-                                question.ratio2
-                            }`,
-                            {
-                                fontFamily: "Roboto",
-                                fontSize: "18px",
-                                color: "#000",
-                            }
-                        )
-                        .setOrigin(0, 0)
-                );
-                this.drawLine(xStart + 120, yStart + 24, 80);
+                this.drawFractionQuestion(xStart, yStart, index + 7, question);
 
-                // Cập nhật yOffset lớn nhất
-                maxYOffset = Math.max(maxYOffset, yStart + 50);
-            } else if (question.type === "variable") {
-                // Bài 3: Biến số
-                const xStart = 70;
-                const yStart = yOffset + index * 50; // Tăng khoảng cách giữa các câu hỏi
+                const sectionHeight = yStart + this.scale.height * 0.04;
+                maxYOffset = Math.max(maxYOffset, sectionHeight);
 
-                this.worksheetContainer!.add(
-                    this.add
-                        .text(
-                            xStart,
-                            yStart,
-                            `${index + 13}) ${question.ratio1} = ${
-                                question.ratio2
-                            } ______ =`,
-                            {
-                                fontFamily: "Roboto",
-                                fontSize: "18px",
-                                color: "#000",
-                            }
-                        )
-                        .setOrigin(0, 0)
-                );
-                this.drawLine(xStart + 180, yStart + 24, 80);
+                if (index % 3 === 2) {
+                    yOffset += this.scale.height * 0.05;
+                }
+            } else if (question.getType() === "variable") {
+                const xStart =
+                    this.scale.width * 0.05 +
+                    (index % 3) * this.scale.width * 0.25;
+                const yStart =
+                    yOffset + Math.floor(index / 3) * this.scale.height * 0.05;
 
-                // Cập nhật yOffset lớn nhất
-                maxYOffset = Math.max(maxYOffset, yStart + 50);
+                this.drawVariableQuestion(xStart, yStart, index + 13, question);
+
+                const sectionHeight = yStart + this.scale.height * 0.04;
+                maxYOffset = Math.max(maxYOffset, sectionHeight);
+
+                if (index % 3 === 2) {
+                    yOffset += this.scale.height * 0.05;
+                }
             }
         });
 
-        // Trả về yOffset lớn nhất để đảm bảo không chồng lấn
         return maxYOffset;
     }
 
-    private drawTable(
+    private drawFractionQuestion(
+        x: number,
+        y: number,
+        questionNumber: number,
+        question: QuestionDTO
+    ): void {
+        const fraction1 = question.getFraction1() || "";
+        const fraction2 = question.getFraction2() || "";
+
+        // Tách tử số và mẫu số
+        const [numerator1, denominator1] = fraction1
+            .split("/")
+            .map((val) => val || "");
+        const [numerator2, denominator2] = fraction2
+            .split("/")
+            .map((val) => val || "");
+
+        // Hiển thị số câu hỏi
+        this.worksheetContainer!.add(
+            this.add
+                .text(x, y, `${questionNumber})`, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0, 0)
+        );
+
+        // Hiển thị phân số 1
+        const fraction1X = x + this.scale.width * 0.03;
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction1X, y - this.scale.height * 0.01, numerator1, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+        this.drawLine(
+            fraction1X - this.scale.width * 0.015,
+            y,
+            this.scale.width * 0.03
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction1X, y + this.scale.height * 0.01, denominator1, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+
+        // Hiển thị "and"
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction1X + this.scale.width * 0.03, y, "and", {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+
+        // Hiển thị phân số 2
+        const fraction2X = fraction1X + this.scale.width * 0.06;
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction2X, y - this.scale.height * 0.01, numerator2, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+        this.drawLine(
+            fraction2X - this.scale.width * 0.015,
+            y,
+            this.scale.width * 0.03
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction2X, y + this.scale.height * 0.01, denominator2, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+
+        // Hiển thị dấu "______"
+        this.drawLine(
+            fraction2X + this.scale.width * 0.03,
+            y,
+            this.scale.width * 0.04
+        );
+    }
+
+    private drawVariableQuestion(
+        x: number,
+        y: number,
+        questionNumber: number,
+        question: QuestionDTO
+    ): void {
+        const fraction1 = question.getFraction1() || "";
+        const fraction2 = question.getFraction2() || "";
+        const variable = question.getVariable() || "";
+
+        // Tách tử số và mẫu số
+        const [numerator1, denominator1] = fraction1
+            .split("/")
+            .map((val) => val || "");
+        const [numerator2, denominator2] = fraction2
+            .split("/")
+            .map((val) => val || "");
+
+        // Hiển thị số câu hỏi
+        this.worksheetContainer!.add(
+            this.add
+                .text(x, y, `${questionNumber})`, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0, 0)
+        );
+
+        // Hiển thị phân số 1
+        const fraction1X = x + this.scale.width * 0.03;
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction1X, y - this.scale.height * 0.01, numerator1, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+        this.drawLine(
+            fraction1X - this.scale.width * 0.015,
+            y,
+            this.scale.width * 0.03
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction1X, y + this.scale.height * 0.01, denominator1, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+
+        // Hiển thị dấu "="
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction1X + this.scale.width * 0.03, y, "=", {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+
+        // Hiển thị phân số 2 (chứa biến)
+        const fraction2X = fraction1X + this.scale.width * 0.06;
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction2X, y - this.scale.height * 0.01, numerator2, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+        this.drawLine(
+            fraction2X - this.scale.width * 0.015,
+            y,
+            this.scale.width * 0.03
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(fraction2X, y + this.scale.height * 0.01, denominator2, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+
+        // Hiển thị phần "r = _____"
+        const variableX = fraction2X + this.scale.width * 0.04;
+        this.worksheetContainer!.add(
+            this.add
+                .text(variableX, y, variable, {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(variableX + this.scale.width * 0.02, y, "=", {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scale.width * 0.02}px`,
+                    color: "#000",
+                })
+                .setOrigin(0.5, 0.5)
+        );
+        this.drawLine(
+            variableX + this.scale.width * 0.03,
+            y,
+            this.scale.width * 0.04
+        );
+    }
+
+    private drawTable3x2(
         x: number,
         y: number,
         width: number,
         height: number,
         data: {
-            topLeft: number;
-            topRight: number;
-            bottomLeft: number;
-            bottomRight: number;
+            topLeft: number | string;
+            topMiddle?: number | string;
+            topRight?: number | string;
+            bottomLeft: number | string;
+            bottomMiddle?: number | string;
+            bottomRight?: number | string;
         }
     ): void {
         const graphics = this.add.graphics();
         graphics.lineStyle(1, 0x000000);
-        graphics.strokeRect(x, y, width, height);
+        graphics.strokeRect(x, y, width * 3, height * 2);
         graphics.strokeLineShape(
-            new Phaser.Geom.Line(x, y + height / 2, x + width, y + height / 2)
+            new Phaser.Geom.Line(x, y + height, x + width * 3, y + height)
         );
         graphics.strokeLineShape(
-            new Phaser.Geom.Line(x + width / 2, y, x + width / 2, y + height)
+            new Phaser.Geom.Line(x + width, y, x + width, y + height * 2)
+        );
+        graphics.strokeLineShape(
+            new Phaser.Geom.Line(
+                x + width * 2,
+                y,
+                x + width * 2,
+                y + height * 2
+            )
         );
 
         this.worksheetContainer!.add(graphics);
 
         this.worksheetContainer!.add(
             this.add
-                .text(x + width / 4, y + height / 4, data.topLeft.toString(), {
+                .text(x + width / 2, y + height / 2, data.topLeft.toString(), {
                     fontFamily: "Roboto",
-                    fontSize: "16px",
+                    fontSize: `${this.scale.width * 0.018}px`,
                     color: "#000",
                 })
                 .setOrigin(0.5, 0.5)
@@ -357,12 +584,12 @@ export default class WorksheetScene extends Phaser.Scene {
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    x + (3 * width) / 4,
-                    y + height / 4,
-                    data.topRight.toString(),
+                    x + width * 1.5,
+                    y + height / 2,
+                    (data.topMiddle || "").toString(),
                     {
                         fontFamily: "Roboto",
-                        fontSize: "16px",
+                        fontSize: `${this.scale.width * 0.018}px`,
                         color: "#000",
                     }
                 )
@@ -371,12 +598,26 @@ export default class WorksheetScene extends Phaser.Scene {
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    x + width / 4,
-                    y + (3 * height) / 4,
+                    x + width * 2.5,
+                    y + height / 2,
+                    (data.topRight || "").toString(),
+                    {
+                        fontFamily: "Roboto",
+                        fontSize: `${this.scale.width * 0.018}px`,
+                        color: "#000",
+                    }
+                )
+                .setOrigin(0.5, 0.5)
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(
+                    x + width / 2,
+                    y + height * 1.5,
                     data.bottomLeft.toString(),
                     {
                         fontFamily: "Roboto",
-                        fontSize: "16px",
+                        fontSize: `${this.scale.width * 0.018}px`,
                         color: "#000",
                     }
                 )
@@ -385,12 +626,26 @@ export default class WorksheetScene extends Phaser.Scene {
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    x + (3 * width) / 4,
-                    y + (3 * height) / 4,
-                    data.bottomRight.toString(),
+                    x + width * 1.5,
+                    y + height * 1.5,
+                    (data.bottomMiddle || "").toString(),
                     {
                         fontFamily: "Roboto",
-                        fontSize: "16px",
+                        fontSize: `${this.scale.width * 0.018}px`,
+                        color: "#000",
+                    }
+                )
+                .setOrigin(0.5, 0.5)
+        );
+        this.worksheetContainer!.add(
+            this.add
+                .text(
+                    x + width * 2.5,
+                    y + height * 1.5,
+                    (data.bottomRight || "").toString(),
+                    {
+                        fontFamily: "Roboto",
+                        fontSize: `${this.scale.width * 0.018}px`,
                         color: "#000",
                     }
                 )
@@ -404,6 +659,16 @@ export default class WorksheetScene extends Phaser.Scene {
         graphics.beginPath();
         graphics.moveTo(x, y);
         graphics.lineTo(x + length, y);
+        graphics.strokePath();
+        this.worksheetContainer!.add(graphics);
+    }
+
+    private drawHorizontalLine(y: number): void {
+        const graphics = this.add.graphics();
+        graphics.lineStyle(1, 0x000000);
+        graphics.beginPath();
+        graphics.moveTo(this.scale.width * 0.05, y);
+        graphics.lineTo(this.scale.width * 0.95, y);
         graphics.strokePath();
         this.worksheetContainer!.add(graphics);
     }

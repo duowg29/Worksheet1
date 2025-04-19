@@ -6,7 +6,7 @@ import WorksheetScene from "./scenes/WorksheetScene";
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     width: 900, // Kích thước theo thiết kế Figma
-    height: 1165,
+    height: 1232,
     parent: "phaser-example",
     backgroundColor: "#FFFFFF",
     scale: {

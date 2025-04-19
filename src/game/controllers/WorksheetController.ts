@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import WorksheetDTO, { TableData } from "../dto/WorksheetDTO";
 import ExerciseDTO from "../dto/ExerciseDTO";
 import QuestionDTO from "../dto/QuestionDTO";
@@ -16,14 +16,11 @@ export default class WorksheetController {
     createWorksheet(): WorksheetDTO {
         const exercises: ExerciseDTO[] = [];
 
-        // Bài 1: Write two equivalent ratios (3 câu, mỗi câu có 2 bảng)
+        // Bài 1: Write two equivalent ratios (6 câu, mỗi câu có 1 bảng 3x2)
         const exercise1Questions: QuestionDTO[] = [];
-        for (let i = 0; i < 3; i++) {
-            const table1 = this.generateTableData();
-            const table2 = this.generateEquivalentTableData(table1);
-            exercise1Questions.push(
-                new QuestionDTO("table", { table1, table2 })
-            );
+        for (let i = 0; i < 6; i++) {
+            const table = this.generateTableDataForExercise1();
+            exercise1Questions.push(new QuestionDTO("table", { table }));
         }
         exercises.push(
             new ExerciseDTO("Write two equivalent ratios", exercise1Questions)
@@ -32,18 +29,18 @@ export default class WorksheetController {
         // Bài 2: Determine whether the ratios are equivalent (6 câu)
         const exercise2Questions: QuestionDTO[] = [];
         for (let i = 0; i < 6; i++) {
-            const ratio1Nums = this.generateRatio();
+            const fraction1 = this.generateFraction();
             const isEquivalent = Math.random() > 0.5;
-            let ratio2Nums: [number, number];
+            let fraction2: [number, number];
             if (isEquivalent) {
-                ratio2Nums = this.generateEquivalentRatio(ratio1Nums);
+                fraction2 = this.generateEquivalentFraction(fraction1);
             } else {
-                ratio2Nums = this.generateNonEquivalentRatio(ratio1Nums);
+                fraction2 = this.generateNonEquivalentFraction(fraction1);
             }
             exercise2Questions.push(
-                new QuestionDTO("ratio", {
-                    ratio1: `${ratio1Nums[0]} and ${ratio1Nums[1]}`,
-                    ratio2: `${ratio2Nums[0]} and ${ratio2Nums[1]}`,
+                new QuestionDTO("fraction", {
+                    fraction1: `${fraction1[0]}/${fraction1[1]}`,
+                    fraction2: `${fraction2[0]}/${fraction2[1]}`,
                 })
             );
         }
@@ -58,16 +55,16 @@ export default class WorksheetController {
         const exercise3Questions: QuestionDTO[] = [];
         const variables = ["x", "y", "z", "r", "s", "t"];
         for (let i = 0; i < 6; i++) {
-            const ratio1Nums = this.generateRatio();
-            const ratio2Nums = this.generateEquivalentRatio(ratio1Nums);
+            const fraction1 = this.generateFraction();
+            const fraction2 = this.generateEquivalentFraction(fraction1);
             const variable = variables[i];
             const isFirstVariable = Math.random() > 0.5;
             exercise3Questions.push(
                 new QuestionDTO("variable", {
-                    ratio1: `${ratio1Nums[0]}:${ratio1Nums[1]}`,
-                    ratio2: isFirstVariable
-                        ? `${variable}:${ratio2Nums[1]}`
-                        : `${ratio2Nums[0]}:${variable}`,
+                    fraction1: `${fraction1[0]}/${fraction1[1]}`,
+                    fraction2: isFirstVariable
+                        ? `${variable}/${fraction2[1]}`
+                        : `${fraction2[0]}/${variable}`,
                     variable,
                 })
             );
@@ -87,12 +84,17 @@ export default class WorksheetController {
         if (!this.worksheet) return;
 
         const container = this.scene.getWorksheetContainer();
+        const buttonContainer = this.scene.getButtonContainer();
         if (!container) {
             console.error("Worksheet container not found");
             return;
         }
 
-        // Chụp toàn bộ scene trước
+        // Ẩn buttonContainer trước khi chụp ảnh
+        if (buttonContainer) {
+            buttonContainer.setVisible(false);
+        }
+
         this.scene.game.renderer.snapshot(
             (snapshot: Phaser.Display.Color | HTMLImageElement) => {
                 if (!(snapshot instanceof HTMLImageElement)) {
@@ -100,27 +102,41 @@ export default class WorksheetController {
                         "Snapshot is not an HTMLImageElement:",
                         snapshot
                     );
+                    // Khôi phục buttonContainer nếu có lỗi
+                    if (buttonContainer) {
+                        buttonContainer.setVisible(true);
+                    }
                     return;
                 }
 
-                // Lấy kích thước và vị trí của container
-                const bounds = container.getBounds();
-                const containerX = bounds.x;
-                const containerY = bounds.y;
-                const containerWidth = bounds.width;
-                const containerHeight = bounds.height;
+                // Tính toán tọa độ và kích thước của khung màu đen
+                const borderOffsetX = this.scene.scale.width * 0.01; // Khoảng cách từ mép trái/phải của đường viền
+                const borderOffsetY = this.scene.scale.height * 0.01; // Khoảng cách từ mép trên của đường viền
 
-                // Tạo canvas tạm để cắt khu vực của worksheetContainer
+                // Lấy chiều cao của khung từ WorksheetScene
+                const totalHeight = this.scene.getWorksheetHeight();
+
+                // Tọa độ và kích thước của khung màu đen (bên trong đường viền)
+                const containerX = borderOffsetX; // Điều chỉnh để loại bỏ viền đen
+                const containerY = borderOffsetY; // Điều chỉnh để loại bỏ viền đen
+                const containerWidth = this.scene.scale.width * 0.98; // Trừ đi độ dày viền ở cả hai bên
+                const containerHeight = totalHeight; // Trừ đi độ dày viền ở trên và dưới
+
+                // Tạo canvas để cắt nội dung bên trong khung màu đen
                 const canvas = document.createElement("canvas");
                 canvas.width = containerWidth;
                 canvas.height = containerHeight;
                 const ctx = canvas.getContext("2d");
                 if (!ctx) {
                     console.error("Cannot get canvas context");
+                    // Khôi phục buttonContainer nếu có lỗi
+                    if (buttonContainer) {
+                        buttonContainer.setVisible(true);
+                    }
                     return;
                 }
 
-                // Cắt khu vực của worksheetContainer từ ảnh chụp toàn bộ scene
+                // Cắt nội dung từ snapshot
                 ctx.drawImage(
                     snapshot,
                     containerX,
@@ -133,6 +149,7 @@ export default class WorksheetController {
                     containerHeight
                 );
 
+                // Tạo PDF từ canvas
                 const pdf = new jsPDF({
                     orientation: "portrait",
                     unit: "px",
@@ -144,11 +161,9 @@ export default class WorksheetController {
                 const margin = 20;
                 const maxHeightPerPage = pageHeight - margin * 2;
 
-                // Tính tỷ lệ để nội dung vừa với chiều rộng trang A4
                 const imgWidth = pageWidth - margin * 2;
                 const imgHeight = (containerHeight * imgWidth) / containerWidth;
 
-                // Chia nội dung thành nhiều trang nếu cần
                 let remainingHeight = imgHeight;
                 let yOffset = 0;
 
@@ -160,7 +175,6 @@ export default class WorksheetController {
                     const clipHeight =
                         (heightToDraw * containerWidth) / imgWidth;
 
-                    // Tạo canvas tạm để cắt phần ảnh cần vẽ trên trang hiện tại
                     const pageCanvas = document.createElement("canvas");
                     pageCanvas.width = containerWidth;
                     pageCanvas.height = clipHeight;
@@ -196,51 +210,53 @@ export default class WorksheetController {
                 }
 
                 pdf.save("equivalent_ratios_worksheet.pdf");
+
+                // Khôi phục buttonContainer sau khi chụp ảnh
+                if (buttonContainer) {
+                    buttonContainer.setVisible(true);
+                }
             }
         );
     }
 
-    private generateTableData(): TableData {
+    // Tạo dữ liệu cho bảng 3x2 của Bài 1 (chỉ điền 2 ô đầu tiên)
+    private generateTableDataForExercise1(): TableData {
         const topLeft = Phaser.Math.Between(1, 10);
         const bottomLeft = Phaser.Math.Between(1, 10);
-        const multiplier = Phaser.Math.Between(2, 5);
         return {
             topLeft,
-            topRight: topLeft * multiplier,
+            topMiddle: "",
+            topRight: "",
             bottomLeft,
-            bottomRight: bottomLeft * multiplier,
+            bottomMiddle: "",
+            bottomRight: "",
         };
     }
 
-    private generateEquivalentTableData(table1: TableData): TableData {
-        const multiplier = Phaser.Math.Between(2, 5);
-        return {
-            topLeft: table1.topLeft * multiplier,
-            topRight: table1.topRight * multiplier,
-            bottomLeft: table1.bottomLeft * multiplier,
-            bottomRight: table1.bottomRight * multiplier,
-        };
+    // Tạo một phân số ngẫu nhiên
+    private generateFraction(): [number, number] {
+        const numerator = Phaser.Math.Between(1, 10);
+        const denominator = Phaser.Math.Between(1, 10);
+        return [numerator, denominator];
     }
 
-    private generateRatio(): [number, number] {
-        const num1 = Phaser.Math.Between(1, 10);
-        const num2 = Phaser.Math.Between(1, 10);
-        return [num1, num2];
-    }
-
-    private generateEquivalentRatio(ratio: [number, number]): [number, number] {
-        const multiplier = Phaser.Math.Between(2, 5);
-        return [ratio[0] * multiplier, ratio[1] * multiplier];
-    }
-
-    private generateNonEquivalentRatio(
-        ratio: [number, number]
+    // Tạo phân số tương đương
+    private generateEquivalentFraction(
+        fraction: [number, number]
     ): [number, number] {
-        let num1: number, num2: number;
+        const multiplier = Phaser.Math.Between(2, 5);
+        return [fraction[0] * multiplier, fraction[1] * multiplier];
+    }
+
+    // Tạo phân số không tương đương
+    private generateNonEquivalentFraction(
+        fraction: [number, number]
+    ): [number, number] {
+        let numerator: number, denominator: number;
         do {
-            num1 = Phaser.Math.Between(1, 10);
-            num2 = Phaser.Math.Between(1, 10);
-        } while (num1 / num2 === ratio[0] / ratio[1]);
-        return [num1, num2];
+            numerator = Phaser.Math.Between(1, 10);
+            denominator = Phaser.Math.Between(1, 10);
+        } while (numerator / denominator === fraction[0] / fraction[1]);
+        return [numerator, denominator];
     }
 }
