@@ -14,11 +14,11 @@ const config: Phaser.Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH,
         max: {
             width: 1920,
-            height: 1080,
+            height: 1920 * (1232 / 900), // Giữ tỷ lệ
         },
         min: {
-            width: 480,
-            height: 270,
+            width: 320, // Hỗ trợ màn hình nhỏ hơn (như iPhone SE)
+            height: 320 * (1232 / 900),
         },
     },
 

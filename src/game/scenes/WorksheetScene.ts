@@ -33,42 +33,157 @@ export default class WorksheetScene extends Phaser.Scene {
 
         this.buttonContainer = this.add.container(0, 0);
 
+        // Tạo nút "Create Worksheet"
         const createButton = this.add
             .text(
-                this.scale.width * 0.78,
+                this.scale.width * 0.75,
                 this.scale.height * 0.95,
                 "Create Worksheet",
                 {
                     fontFamily: "Roboto",
-                    fontSize: "18px",
+                    fontSize: "16px",
                     color: "#ffffff",
-                    backgroundColor: "#4A90E2",
                     padding: { left: 20, right: 20, top: 10, bottom: 10 },
-                    fixedWidth: this.scale.width * 0.15,
-                    fixedHeight: this.scale.height * 0.04,
+                    fixedWidth: this.scale.width * 0.18,
+                    fixedHeight: this.scale.width * 0.06,
                     align: "center",
                 }
             )
-            .setInteractive()
-            .setOrigin(0.5, 0.5)
-            .on("pointerdown", () => this.createWorksheet());
+            .setOrigin(0.5, 0.5);
 
+        // Tạo hình chữ nhật bo góc làm nền cho nút "Create Worksheet"
+        const createButtonBackground = this.add.graphics();
+        createButtonBackground.fillStyle(0x1e90ff, 1); // Nền xanh
+        createButtonBackground.fillRoundedRect(
+            this.scale.width * 0.75 - (this.scale.width * 0.18) / 2,
+            this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+            this.scale.width * 0.18,
+            this.scale.width * 0.06,
+            10
+        );
+        createButtonBackground
+            .setInteractive(
+                new Phaser.Geom.Rectangle(
+                    this.scale.width * 0.75 - (this.scale.width * 0.18) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.18,
+                    this.scale.width * 0.06
+                ),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on("pointerdown", () => this.createWorksheet())
+            .on("pointerover", () => {
+                createButtonBackground.clear();
+                createButtonBackground.fillStyle(0x40c4ff, 1); // Nền xanh sáng khi hover
+                createButtonBackground.fillRoundedRect(
+                    this.scale.width * 0.75 - (this.scale.width * 0.18) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.18,
+                    this.scale.width * 0.06,
+                    10
+                );
+            })
+            .on("pointerout", () => {
+                createButtonBackground.clear();
+                createButtonBackground.fillStyle(0x1e90ff, 1); // Khôi phục màu nền ban đầu
+                createButtonBackground.fillRoundedRect(
+                    this.scale.width * 0.75 - (this.scale.width * 0.18) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.18,
+                    this.scale.width * 0.06,
+                    10
+                );
+            });
+
+        // Tạo nút "Export"
         const exportButton = this.add
-            .text(this.scale.width * 0.95, this.scale.height * 0.95, "Export", {
+            .text(this.scale.width * 0.92, this.scale.height * 0.95, "Export", {
                 fontFamily: "Roboto",
-                fontSize: "18px",
-                color: "#ffffff",
-                backgroundColor: "#4A90E2",
-                padding: { left: 20, right: 20, top: 10, bottom: 10 },
-                fixedWidth: this.scale.width * 0.15,
-                fixedHeight: this.scale.height * 0.04,
+                fontSize: "16px",
+                color: "#1E90FF", // Chữ xanh
+                padding: { left: 15, right: 15, top: 10, bottom: 10 },
+                fixedWidth: this.scale.width * 0.1,
+                fixedHeight: this.scale.width * 0.06,
                 align: "center",
             })
-            .setInteractive()
-            .setOrigin(0.5, 0.5)
-            .on("pointerdown", () => this.worksheetController.exportToPDF());
+            .setOrigin(0.5, 0.5);
 
-        this.buttonContainer.add([createButton, exportButton]);
+        // Tạo hình chữ nhật bo góc làm nền và viền cho nút "Export"
+        const exportButtonBackground = this.add.graphics();
+        exportButtonBackground.fillStyle(0xffffff, 1); // Nền trắng
+        exportButtonBackground.lineStyle(2, 0x1e90ff, 1); // Viền xanh
+        exportButtonBackground.fillRoundedRect(
+            this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+            this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+            this.scale.width * 0.1,
+            this.scale.width * 0.06,
+            10
+        );
+        exportButtonBackground.strokeRoundedRect(
+            this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+            this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+            this.scale.width * 0.1,
+            this.scale.width * 0.06,
+            10
+        );
+        exportButtonBackground
+            .setInteractive(
+                new Phaser.Geom.Rectangle(
+                    this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.1,
+                    this.scale.width * 0.06
+                ),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on("pointerdown", () => this.worksheetController.exportToPDF())
+            .on("pointerover", () => {
+                exportButton.setStyle({ color: "#40C4FF" }); // Chữ đổi màu khi hover
+                exportButtonBackground.clear();
+                exportButtonBackground.fillStyle(0xffffff, 1);
+                exportButtonBackground.lineStyle(2, 0x40c4ff, 1); // Viền đổi màu khi hover
+                exportButtonBackground.fillRoundedRect(
+                    this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.1,
+                    this.scale.width * 0.06,
+                    10
+                );
+                exportButtonBackground.strokeRoundedRect(
+                    this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.1,
+                    this.scale.width * 0.06,
+                    10
+                );
+            })
+            .on("pointerout", () => {
+                exportButton.setStyle({ color: "#1E90FF" }); // Khôi phục màu chữ ban đầu
+                exportButtonBackground.clear();
+                exportButtonBackground.fillStyle(0xffffff, 1);
+                exportButtonBackground.lineStyle(2, 0x1e90ff, 1); // Khôi phục màu viền ban đầu
+                exportButtonBackground.fillRoundedRect(
+                    this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.1,
+                    this.scale.width * 0.06,
+                    10
+                );
+                exportButtonBackground.strokeRoundedRect(
+                    this.scale.width * 0.92 - (this.scale.width * 0.1) / 2,
+                    this.scale.height * 0.95 - (this.scale.width * 0.06) / 2,
+                    this.scale.width * 0.1,
+                    this.scale.width * 0.06,
+                    10
+                );
+            });
+
+        this.buttonContainer.add([
+            createButtonBackground,
+            createButton,
+            exportButtonBackground,
+            exportButton,
+        ]);
     }
 
     public getWorksheetContainer(): Phaser.GameObjects.Container | null {
@@ -113,7 +228,7 @@ export default class WorksheetScene extends Phaser.Scene {
         worksheet.exercises.forEach((exercise: ExerciseDTO, index: number) => {
             yOffset = this.drawExercise(exercise, index + 1, yOffset);
             if (index < worksheet.exercises.length - 1) {
-                yOffset += this.scale.height * 0.02;
+                yOffset += this.scale.height * 0.04;
                 this.drawHorizontalLine(yOffset);
                 yOffset += this.scale.height * 0.03;
             }
@@ -136,10 +251,10 @@ export default class WorksheetScene extends Phaser.Scene {
     }
 
     private drawHeader(yOffset: number): void {
-        const xStart = this.scale.width * 0.15;
+        const xStart = this.scale.width * 0.05;
         const labelWidth = this.scale.width * 0.1;
-        const fieldWidth = this.scale.width * 0.25;
-        const lineHeight = this.scale.height * 0.02;
+        const fieldWidth = this.scale.width * 0.4;
+        const lineHeight = this.scale.height * 0.015;
 
         this.worksheetContainer!.add(
             this.add
@@ -155,7 +270,7 @@ export default class WorksheetScene extends Phaser.Scene {
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    xStart + labelWidth + fieldWidth + this.scale.width * 0.05,
+                    xStart + labelWidth + fieldWidth + this.scale.width * 0.08,
                     yOffset,
                     "Score:",
                     {
@@ -169,7 +284,7 @@ export default class WorksheetScene extends Phaser.Scene {
         this.drawLine(
             xStart + labelWidth * 2 + fieldWidth + this.scale.width * 0.05,
             yOffset + lineHeight,
-            fieldWidth
+            fieldWidth - this.scale.width * 0.2
         );
 
         this.worksheetContainer!.add(
@@ -195,7 +310,7 @@ export default class WorksheetScene extends Phaser.Scene {
         this.worksheetContainer!.add(
             this.add
                 .text(
-                    xStart + labelWidth + fieldWidth + this.scale.width * 0.05,
+                    xStart + labelWidth + fieldWidth + this.scale.width * 0.08,
                     yOffset + lineHeight + this.scale.height * 0.01,
                     "Date:",
                     {
@@ -209,7 +324,7 @@ export default class WorksheetScene extends Phaser.Scene {
         this.drawLine(
             xStart + labelWidth * 2 + fieldWidth + this.scale.width * 0.05,
             yOffset + lineHeight * 2 + this.scale.height * 0.01,
-            fieldWidth
+            fieldWidth - this.scale.width * 0.2
         );
     }
 
@@ -233,7 +348,7 @@ export default class WorksheetScene extends Phaser.Scene {
                 )
                 .setOrigin(0, 0)
         );
-        yOffset += this.scale.height * 0.04;
+        yOffset += this.scale.height * 0.06;
 
         let maxYOffset = yOffset;
 
@@ -242,10 +357,10 @@ export default class WorksheetScene extends Phaser.Scene {
                 const tableWidth = this.scale.width * 0.05;
                 const tableHeight = this.scale.height * 0.03;
                 const xStart =
-                    this.scale.width * 0.05 +
-                    (index % 3) * this.scale.width * 0.25;
+                    this.scale.width * 0.1 +
+                    (index % 3) * this.scale.width * 0.3;
                 const yStart =
-                    yOffset + Math.floor(index / 3) * this.scale.height * 0.08;
+                    yOffset + Math.floor(index / 3) * this.scale.height * 0.005;
 
                 this.worksheetContainer!.add(
                     this.add
@@ -286,14 +401,14 @@ export default class WorksheetScene extends Phaser.Scene {
                 }
             } else if (question.getType() === "fraction") {
                 const xStart =
-                    this.scale.width * 0.05 +
+                    this.scale.width * 0.08 +
                     (index % 3) * this.scale.width * 0.25;
                 const yStart =
-                    yOffset + Math.floor(index / 3) * this.scale.height * 0.05;
+                    yOffset + Math.floor(index / 3) * this.scale.height * 0.04;
 
                 this.drawFractionQuestion(xStart, yStart, index + 7, question);
 
-                const sectionHeight = yStart + this.scale.height * 0.04;
+                const sectionHeight = yStart + this.scale.height * 0.03;
                 maxYOffset = Math.max(maxYOffset, sectionHeight);
 
                 if (index % 3 === 2) {
@@ -301,8 +416,8 @@ export default class WorksheetScene extends Phaser.Scene {
                 }
             } else if (question.getType() === "variable") {
                 const xStart =
-                    this.scale.width * 0.05 +
-                    (index % 3) * this.scale.width * 0.25;
+                    this.scale.width * 0.08 +
+                    (index % 3) * this.scale.width * 0.3;
                 const yStart =
                     yOffset + Math.floor(index / 3) * this.scale.height * 0.05;
 
@@ -340,7 +455,7 @@ export default class WorksheetScene extends Phaser.Scene {
         // Hiển thị số câu hỏi
         this.worksheetContainer!.add(
             this.add
-                .text(x, y, `${questionNumber})`, {
+                .text(x, y - this.scale.height * 0.01, `${questionNumber})`, {
                     fontFamily: "Roboto",
                     fontSize: `${this.scale.width * 0.02}px`,
                     color: "#000",
@@ -349,7 +464,7 @@ export default class WorksheetScene extends Phaser.Scene {
         );
 
         // Hiển thị phân số 1
-        const fraction1X = x + this.scale.width * 0.03;
+        const fraction1X = x + this.scale.width * 0.05;
         this.worksheetContainer!.add(
             this.add
                 .text(fraction1X, y - this.scale.height * 0.01, numerator1, {
@@ -377,7 +492,7 @@ export default class WorksheetScene extends Phaser.Scene {
         // Hiển thị "and"
         this.worksheetContainer!.add(
             this.add
-                .text(fraction1X + this.scale.width * 0.03, y, "and", {
+                .text(fraction1X + this.scale.width * 0.04, y, "and", {
                     fontFamily: "Roboto",
                     fontSize: `${this.scale.width * 0.02}px`,
                     color: "#000",
@@ -386,7 +501,7 @@ export default class WorksheetScene extends Phaser.Scene {
         );
 
         // Hiển thị phân số 2
-        const fraction2X = fraction1X + this.scale.width * 0.06;
+        const fraction2X = fraction1X + this.scale.width * 0.08;
         this.worksheetContainer!.add(
             this.add
                 .text(fraction2X, y - this.scale.height * 0.01, numerator2, {
@@ -414,7 +529,7 @@ export default class WorksheetScene extends Phaser.Scene {
         // Hiển thị dấu "______"
         this.drawLine(
             fraction2X + this.scale.width * 0.03,
-            y,
+            y + this.scale.height * 0.01,
             this.scale.width * 0.04
         );
     }
@@ -440,7 +555,7 @@ export default class WorksheetScene extends Phaser.Scene {
         // Hiển thị số câu hỏi
         this.worksheetContainer!.add(
             this.add
-                .text(x, y, `${questionNumber})`, {
+                .text(x, y - this.scale.height * 0.01, `${questionNumber})`, {
                     fontFamily: "Roboto",
                     fontSize: `${this.scale.width * 0.02}px`,
                     color: "#000",
@@ -449,7 +564,7 @@ export default class WorksheetScene extends Phaser.Scene {
         );
 
         // Hiển thị phân số 1
-        const fraction1X = x + this.scale.width * 0.03;
+        const fraction1X = x + this.scale.width * 0.06;
         this.worksheetContainer!.add(
             this.add
                 .text(fraction1X, y - this.scale.height * 0.01, numerator1, {
