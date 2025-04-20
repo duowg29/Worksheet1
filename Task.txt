@@ -1,5 +1,5 @@
-Di chuột vào ô nào thì nó sáng hai đường chiếu đến hai số ở 2 trục tung và hoành. Đồng thời hiện luôn kết quả của phép nhân tương ứng.
-Di chuột ra ngoài thì nó lại để text lại AxB như cũ
-Nếu bấm chuột xuống thì nó cố định hiện kết quả của phép nhân, bấm lại lần nữa thì quay về AxB như ban đầu
-Di di chuột vào hay ra thì có hiệu ứng lật bài.
-Khi bấm chuột thì có hiệu ứng nhấn xuống rồi fade out text hiện tại và fade in text mới
+Bỏ comment không cần thiết
+sửa lại font chữ sang nunito
+tách các hàm riêng ra view và service
+dùng module common cho button
+bỏ các tính năng không cần thiết
