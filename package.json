@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "jspdf": "^3.0.1",
+        "mct-common": "github:YoloGameStudio/mct-common",
         "next": "14.2.3",
         "phaser": "^3.88.2",
         "react": "^18",

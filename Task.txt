@@ -1,5 +1,3 @@
-Bỏ comment không cần thiết
 sửa lại font chữ sang nunito
-tách các hàm riêng ra view và service
 dùng module common cho button
 bỏ các tính năng không cần thiết
