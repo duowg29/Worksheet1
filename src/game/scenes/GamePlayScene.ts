@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import WorksheetController from "../controllers/WorksheetController";
 import WorksheetView from "../view/WorksheetView";
-// Tải font Roboto từ Google Fonts
+// Tải font từ Google Fonts
 const loadFont = () => {
     const link = document.createElement("link");
     link.href =
