@@ -1,10 +1,10 @@
 import { jsPDF } from "jspdf";
-import WorksheetScene from "../scenes/WorksheetScene";
+import GamePlayScene from "../scenes/GamePlayScene";
 
 export default class ExportService {
-    private scene: WorksheetScene;
+    private scene: GamePlayScene;
 
-    constructor(scene: WorksheetScene) {
+    constructor(scene: GamePlayScene) {
         this.scene = scene;
     }
 
@@ -39,7 +39,7 @@ export default class ExportService {
                 const borderOffsetX = this.scene.scale.width * 0.01;
                 const borderOffsetY = this.scene.scale.height * 0.01;
 
-                // Lấy chiều cao của khung từ WorksheetScene
+                // Lấy chiều cao của khung từ GamePlayScene
                 const totalHeight = this.scene.getWorksheetHeight();
 
                 // Tọa độ và kích thước của khung màu đen (bên trong đường viền)

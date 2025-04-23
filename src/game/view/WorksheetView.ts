@@ -1,16 +1,16 @@
-import Phaser from "phaser";
+import Phaser, { Game } from "phaser";
 import WorksheetDTO from "../dto/WorksheetDTO";
 import HeaderView from "./HeaderView";
 import ExerciseView from "./ExerciseView";
-import WorksheetScene from "../scenes/WorksheetScene";
+import GamePlayScene from "../scenes/GamePlayScene";
 
 export default class WorksheetView {
-    private scene: WorksheetScene; // Đổi kiểu từ Phaser.Scene thành WorksheetScene
+    private scene: GamePlayScene;
     private worksheetHeight: number = 0;
     private worksheetContainer: Phaser.GameObjects.Container | null = null;
     private buttonContainer: Phaser.GameObjects.Container | null = null;
 
-    constructor(scene: WorksheetScene) {
+    constructor(scene: GamePlayScene) {
         this.scene = scene;
     }
 
@@ -27,7 +27,7 @@ export default class WorksheetView {
         // Vẽ header
         const headerView = new HeaderView(this.scene, this.worksheetContainer!);
         yOffset = headerView.drawHeader(yOffset);
-        yOffset += this.scene.scale.height * 0.05;
+        yOffset += this.scene.scale.height * 0.03;
 
         // Vẽ tiêu đề "Equivalent Ratios"
         this.worksheetContainer!.add(
@@ -144,7 +144,7 @@ export default class WorksheetView {
                 ),
                 Phaser.Geom.Rectangle.Contains
             )
-            .on("pointerdown", () => this.scene.createWorksheet()) // Gọi createWorksheet trên WorksheetScene
+            .on("pointerdown", () => this.scene.createWorksheet())
             .on("pointerover", () => {
                 createButtonBackground.clear();
                 createButtonBackground.fillStyle(0x40c4ff, 1);

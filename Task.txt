@@ -1,3 +1,5 @@
 sửa lại font chữ sang nunito
 dùng module common cho button
 bỏ các tính năng không cần thiết
+đề xuất cải tiến (Cho người dùng thêm nút để lựa chọn số câu hỏi mỗi bài, cân nhắc để in ra trang thứ 2 nếu in vượt(thêm cái masked để di lên xuống hiển thị thông tin hiện tại))
+

@@ -10,12 +10,12 @@ const loadFont = () => {
     document.head.appendChild(link);
 };
 
-export default class WorksheetScene extends Phaser.Scene {
+export default class GamePlayScene extends Phaser.Scene {
     private worksheetController: WorksheetController;
     private worksheetView: WorksheetView;
 
     constructor() {
-        super({ key: "WorksheetScene" });
+        super({ key: "GamePlayScene" });
     }
 
     preload(): void {
