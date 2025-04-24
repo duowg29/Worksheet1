@@ -4,10 +4,16 @@ import QuestionDTO from "../dto/QuestionDTO";
 export default class QuestionView {
     private scene: Phaser.Scene;
     private container: Phaser.GameObjects.Container;
+    private answerObjects: Phaser.GameObjects.Text[] = []; // Lưu trữ các đối tượng văn bản của đáp án
 
     constructor(scene: Phaser.Scene, container: Phaser.GameObjects.Container) {
         this.scene = scene;
         this.container = container;
+    }
+
+    // Hiển thị hoặc ẩn đáp án
+    toggleAnswers(show: boolean): void {
+        this.answerObjects.forEach((obj) => obj.setVisible(show));
     }
 
     drawTableQuestion(
@@ -35,7 +41,7 @@ export default class QuestionView {
 
         const tableData = question.getTable();
         if (tableData) {
-            this.drawTable3x2(x, y, width, height, tableData);
+            this.drawTable3x2(x, y, width, height, tableData, question);
         } else {
             console.warn(
                 `Table data is undefined for question ${questionNumber}`
@@ -159,6 +165,23 @@ export default class QuestionView {
             y + this.scene.scale.height * 0.01,
             this.scene.scale.width * 0.04
         );
+
+        // Hiển thị đáp án (ban đầu ẩn)
+        const answerText = this.scene.add
+            .text(
+                fraction2X + this.scene.scale.width * 0.05,
+                y,
+                question.getAnswer(),
+                {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scene.scale.width * 0.02}px`,
+                    color: "#FF0000", // Màu đỏ để phân biệt đáp án
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setVisible(false);
+        this.container.add(answerText);
+        this.answerObjects.push(answerText);
     }
 
     drawVariableQuestion(
@@ -294,9 +317,26 @@ export default class QuestionView {
         );
         this.drawLine(
             variableX + this.scene.scale.width * 0.03,
-            y,
+            y + this.scene.scale.height * 0.005,
             this.scene.scale.width * 0.04
         );
+
+        // Hiển thị đáp án (ban đầu ẩn)
+        const answerText = this.scene.add
+            .text(
+                variableX + this.scene.scale.width * 0.05,
+                y - this.scene.scale.height * 0.005,
+                question.getAnswer(),
+                {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scene.scale.width * 0.02}px`,
+                    color: "#FF0000", // Màu đỏ để phân biệt đáp án
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setVisible(false);
+        this.container.add(answerText);
+        this.answerObjects.push(answerText);
     }
 
     private drawTable3x2(
@@ -311,7 +351,8 @@ export default class QuestionView {
             bottomLeft: number | string;
             bottomMiddle?: number | string;
             bottomRight?: number | string;
-        }
+        },
+        question: QuestionDTO
     ): void {
         const graphics = this.scene.add.graphics();
         graphics.lineStyle(1, 0x000000);
@@ -342,34 +383,36 @@ export default class QuestionView {
                 })
                 .setOrigin(0.5, 0.5)
         );
-        this.container.add(
-            this.scene.add
-                .text(
-                    x + width * 1.5,
-                    y + height / 2,
-                    (data.topMiddle || "").toString(),
-                    {
-                        fontFamily: "Roboto",
-                        fontSize: `${this.scene.scale.width * 0.018}px`,
-                        color: "#000",
-                    }
-                )
-                .setOrigin(0.5, 0.5)
-        );
-        this.container.add(
-            this.scene.add
-                .text(
-                    x + width * 2.5,
-                    y + height / 2,
-                    (data.topRight || "").toString(),
-                    {
-                        fontFamily: "Roboto",
-                        fontSize: `${this.scene.scale.width * 0.018}px`,
-                        color: "#000",
-                    }
-                )
-                .setOrigin(0.5, 0.5)
-        );
+
+        const answer = question.getAnswer();
+        // Hiển thị đáp án (ban đầu ẩn)
+        const topMiddleText = this.scene.add
+            .text(
+                x + width * 1.5,
+                y + height / 2,
+                answer.topMiddle.toString(),
+                {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scene.scale.width * 0.018}px`,
+                    color: "#FF0000", // Màu đỏ để phân biệt đáp án
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setVisible(false);
+        this.container.add(topMiddleText);
+        this.answerObjects.push(topMiddleText);
+
+        const topRightText = this.scene.add
+            .text(x + width * 2.5, y + height / 2, answer.topRight.toString(), {
+                fontFamily: "Roboto",
+                fontSize: `${this.scene.scale.width * 0.018}px`,
+                color: "#FF0000",
+            })
+            .setOrigin(0.5, 0.5)
+            .setVisible(false);
+        this.container.add(topRightText);
+        this.answerObjects.push(topRightText);
+
         this.container.add(
             this.scene.add
                 .text(
@@ -384,34 +427,38 @@ export default class QuestionView {
                 )
                 .setOrigin(0.5, 0.5)
         );
-        this.container.add(
-            this.scene.add
-                .text(
-                    x + width * 1.5,
-                    y + height * 1.5,
-                    (data.bottomMiddle || "").toString(),
-                    {
-                        fontFamily: "Roboto",
-                        fontSize: `${this.scene.scale.width * 0.018}px`,
-                        color: "#000",
-                    }
-                )
-                .setOrigin(0.5, 0.5)
-        );
-        this.container.add(
-            this.scene.add
-                .text(
-                    x + width * 2.5,
-                    y + height * 1.5,
-                    (data.bottomRight || "").toString(),
-                    {
-                        fontFamily: "Roboto",
-                        fontSize: `${this.scene.scale.width * 0.018}px`,
-                        color: "#000",
-                    }
-                )
-                .setOrigin(0.5, 0.5)
-        );
+
+        const bottomMiddleText = this.scene.add
+            .text(
+                x + width * 1.5,
+                y + height * 1.5,
+                answer.bottomMiddle.toString(),
+                {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scene.scale.width * 0.018}px`,
+                    color: "#FF0000",
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setVisible(false);
+        this.container.add(bottomMiddleText);
+        this.answerObjects.push(bottomMiddleText);
+
+        const bottomRightText = this.scene.add
+            .text(
+                x + width * 2.5,
+                y + height * 1.5,
+                answer.bottomRight.toString(),
+                {
+                    fontFamily: "Roboto",
+                    fontSize: `${this.scene.scale.width * 0.018}px`,
+                    color: "#FF0000",
+                }
+            )
+            .setOrigin(0.5, 0.5)
+            .setVisible(false);
+        this.container.add(bottomRightText);
+        this.answerObjects.push(bottomRightText);
     }
 
     private drawLine(x: number, y: number, length: number): void {

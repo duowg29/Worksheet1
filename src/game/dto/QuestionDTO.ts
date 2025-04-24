@@ -1,28 +1,23 @@
 import { TableData } from "./WorksheetDTO";
 
-export default class QuestionDTO {
-    private type: "table" | "fraction" | "variable";
-    private data: {
-        table?: TableData;
-        fraction1?: string;
-        fraction2?: string;
-        variable?: string;
-    };
+interface QuestionData {
+    table?: TableData;
+    fraction1?: string;
+    fraction2?: string;
+    variable?: string;
+    answer?: any; // Đáp án: { topMiddle, topRight, bottomMiddle, bottomRight } cho table; "Yes"/"No" cho fraction; string cho variable
+}
 
-    constructor(
-        type: "table" | "fraction" | "variable",
-        data: {
-            table?: TableData;
-            fraction1?: string;
-            fraction2?: string;
-            variable?: string;
-        }
-    ) {
+export default class QuestionDTO {
+    private type: string;
+    private data: QuestionData;
+
+    constructor(type: string, data: QuestionData) {
         this.type = type;
         this.data = data;
     }
 
-    getType(): "table" | "fraction" | "variable" {
+    getType(): string {
         return this.type;
     }
 
@@ -40,5 +35,9 @@ export default class QuestionDTO {
 
     getVariable(): string | undefined {
         return this.data.variable;
+    }
+
+    getAnswer(): any {
+        return this.data.answer;
     }
 }

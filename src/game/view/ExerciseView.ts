@@ -5,10 +5,12 @@ import QuestionView from "./QuestionView";
 export default class ExerciseView {
     private scene: Phaser.Scene;
     private container: Phaser.GameObjects.Container;
+    private questionView: QuestionView;
 
     constructor(scene: Phaser.Scene, container: Phaser.GameObjects.Container) {
         this.scene = scene;
         this.container = container;
+        this.questionView = new QuestionView(scene, container);
     }
 
     drawExercise(
@@ -35,8 +37,7 @@ export default class ExerciseView {
 
         let maxYOffset = yOffset;
 
-        const questionView = new QuestionView(this.scene, this.container);
-        exercise.questions.forEach((question: any, index: number) => {
+        exercise.getQuestions().forEach((question: any, index: number) => {
             if (question.getType() === "table") {
                 const tableWidth = this.scene.scale.width * 0.05;
                 const tableHeight = this.scene.scale.height * 0.03;
@@ -47,7 +48,7 @@ export default class ExerciseView {
                     yOffset +
                     Math.floor(index / 3) * this.scene.scale.height * 0.005;
 
-                questionView.drawTableQuestion(
+                this.questionView.drawTableQuestion(
                     xStart,
                     yStart,
                     index + 1,
@@ -71,7 +72,7 @@ export default class ExerciseView {
                     yOffset +
                     Math.floor(index / 3) * this.scene.scale.height * 0.04;
 
-                questionView.drawFractionQuestion(
+                this.questionView.drawFractionQuestion(
                     xStart,
                     yStart,
                     index + 7,
@@ -92,7 +93,7 @@ export default class ExerciseView {
                     yOffset +
                     Math.floor(index / 3) * this.scene.scale.height * 0.05;
 
-                questionView.drawVariableQuestion(
+                this.questionView.drawVariableQuestion(
                     xStart,
                     yStart,
                     index + 13,
@@ -109,5 +110,9 @@ export default class ExerciseView {
         });
 
         return maxYOffset;
+    }
+
+    getQuestionView(): QuestionView {
+        return this.questionView;
     }
 }

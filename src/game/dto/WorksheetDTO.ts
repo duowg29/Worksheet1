@@ -1,12 +1,12 @@
 import ExerciseDTO from "./ExerciseDTO";
 
 export interface TableData {
-    topLeft: number | string;
-    topMiddle?: number | string;
-    topRight?: number | string;
-    bottomLeft: number | string;
-    bottomMiddle?: number | string;
-    bottomRight?: number | string;
+    topLeft: number;
+    topMiddle: string;
+    topRight: string;
+    bottomLeft: number;
+    bottomMiddle: string;
+    bottomRight: string;
 }
 
 export default class WorksheetDTO {
@@ -14,7 +14,7 @@ export default class WorksheetDTO {
     private teacher: string;
     private score: string;
     private date: string;
-    public exercises: ExerciseDTO[];
+    private exercises: ExerciseDTO[];
 
     constructor(
         name: string,
@@ -44,5 +44,9 @@ export default class WorksheetDTO {
 
     getDate(): string {
         return this.date;
+    }
+
+    getExercises(): ExerciseDTO[] {
+        return this.exercises;
     }
 }

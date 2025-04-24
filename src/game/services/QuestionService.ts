@@ -8,7 +8,20 @@ export default class QuestionService {
         const questions: QuestionDTO[] = [];
         for (let i = 0; i < count; i++) {
             const table = this.generateTableDataForExercise1();
-            questions.push(new QuestionDTO("table", { table }));
+            // Tính toán đáp án cho bài tập 1: Tìm 2 tỷ lệ tương đương
+            const ratio = table.topLeft / table.bottomLeft;
+            const multiplier1 = Phaser.Math.Between(2, 5);
+            let multiplier2 = Phaser.Math.Between(2, 5);
+            while (multiplier1 === multiplier2) {
+                multiplier2 = Phaser.Math.Between(2, 5);
+            }
+            const answer = {
+                topMiddle: table.topLeft * multiplier1,
+                topRight: table.topLeft * multiplier2,
+                bottomMiddle: table.bottomLeft * multiplier1,
+                bottomRight: table.bottomLeft * multiplier2,
+            };
+            questions.push(new QuestionDTO("table", { table, answer }));
         }
         return questions;
     }
@@ -18,17 +31,32 @@ export default class QuestionService {
         const questions: QuestionDTO[] = [];
         for (let i = 0; i < count; i++) {
             const fraction1 = this.generateFraction();
-            const isEquivalent = Math.random() > 0.5;
             let fraction2: [number, number];
-            if (isEquivalent) {
-                fraction2 = this.generateEquivalentFraction(fraction1);
+            // Tạo phân số thứ hai ngẫu nhiên, không cần kiểm tra tương đương
+            do {
+                fraction2 = this.generateFraction();
+            } while (
+                fraction1[0] === fraction2[0] &&
+                fraction1[1] === fraction2[1]
+            ); // Đảm bảo hai phân số không giống hệt nhau
+
+            // So sánh giá trị của hai phân số
+            const value1 = fraction1[0] / fraction1[1];
+            const value2 = fraction2[0] / fraction2[1];
+            let answer: string;
+            if (value1 > value2) {
+                answer = ">";
+            } else if (value1 < value2) {
+                answer = "<";
             } else {
-                fraction2 = this.generateNonEquivalentFraction(fraction1);
+                answer = "=";
             }
+
             questions.push(
                 new QuestionDTO("fraction", {
                     fraction1: `${fraction1[0]}/${fraction1[1]}`,
                     fraction2: `${fraction2[0]}/${fraction2[1]}`,
+                    answer,
                 })
             );
         }
@@ -44,6 +72,11 @@ export default class QuestionService {
             const fraction2 = this.generateEquivalentFraction(fraction1);
             const variable = variables[i];
             const isFirstVariable = Math.random() > 0.5;
+            // Tính đáp án cho biến
+            const ratio = fraction1[0] / fraction1[1];
+            const answer = isFirstVariable
+                ? fraction2[1] * ratio
+                : fraction2[0] / ratio;
             questions.push(
                 new QuestionDTO("variable", {
                     fraction1: `${fraction1[0]}/${fraction1[1]}`,
@@ -51,6 +84,7 @@ export default class QuestionService {
                         ? `${variable}/${fraction2[1]}`
                         : `${fraction2[0]}/${variable}`,
                     variable,
+                    answer: answer.toString(),
                 })
             );
         }
@@ -84,17 +118,5 @@ export default class QuestionService {
     ): [number, number] {
         const multiplier = Phaser.Math.Between(2, 5);
         return [fraction[0] * multiplier, fraction[1] * multiplier];
-    }
-
-    // Tạo phân số không tương đương
-    private generateNonEquivalentFraction(
-        fraction: [number, number]
-    ): [number, number] {
-        let numerator: number, denominator: number;
-        do {
-            numerator = Phaser.Math.Between(1, 10);
-            denominator = Phaser.Math.Between(1, 10);
-        } while (numerator / denominator === fraction[0] / fraction[1]);
-        return [numerator, denominator];
     }
 }

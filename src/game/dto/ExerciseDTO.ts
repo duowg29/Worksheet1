@@ -1,7 +1,8 @@
 import QuestionDTO from "./QuestionDTO";
+
 export default class ExerciseDTO {
     private title: string;
-    public questions: QuestionDTO[];
+    private questions: QuestionDTO[];
 
     constructor(title: string, questions: QuestionDTO[]) {
         this.title = title;
@@ -10,5 +11,9 @@ export default class ExerciseDTO {
 
     getTitle(): string {
         return this.title;
+    }
+
+    getQuestions(): QuestionDTO[] {
+        return this.questions;
     }
 }
