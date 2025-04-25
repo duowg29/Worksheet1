@@ -72,11 +72,21 @@ export default class QuestionService {
             const fraction2 = this.generateEquivalentFraction(fraction1);
             const variable = variables[i];
             const isFirstVariable = Math.random() > 0.5;
-            // Tính đáp án cho biến
-            const ratio = fraction1[0] / fraction1[1];
-            const answer = isFirstVariable
-                ? fraction2[1] * ratio
-                : fraction2[0] / ratio;
+
+            // Tính đáp án bằng cách nhân chéo để tránh lỗi floating-point
+            let answer: number;
+            if (isFirstVariable) {
+                // Trường hợp: variable/fraction2[1] = fraction1[0]/fraction1[1]
+                // variable / fraction2[1] = fraction1[0] / fraction1[1]
+                // variable = (fraction1[0] * fraction2[1]) / fraction1[1]
+                answer = (fraction1[0] * fraction2[1]) / fraction1[1];
+            } else {
+                // Trường hợp: fraction2[0]/variable = fraction1[0]/fraction1[1]
+                // fraction2[0] / variable = fraction1[0] / fraction1[1]
+                // variable = (fraction1[1] * fraction2[0]) / fraction1[0]
+                answer = (fraction1[1] * fraction2[0]) / fraction1[0];
+            }
+
             questions.push(
                 new QuestionDTO("variable", {
                     fraction1: `${fraction1[0]}/${fraction1[1]}`,

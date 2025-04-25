@@ -5,6 +5,11 @@ import ExerciseView from "./ExerciseView";
 import GamePlayScene from "../scenes/GamePlayScene";
 import QuestionView from "./QuestionView";
 import ExerciseDTO from "../dto/ExerciseDTO";
+import {
+    borderStyles,
+    defaultBorderStyle,
+    BorderStyle,
+} from "../view/BorderService";
 
 export default class WorksheetView {
     private scene: GamePlayScene;
@@ -13,6 +18,8 @@ export default class WorksheetView {
     private buttonContainer: Phaser.GameObjects.Container | null = null;
     private questionViews: QuestionView[] = []; // Lưu trữ các QuestionView để quản lý đáp án
     private showAnswers: boolean = false; // Trạng thái hiển thị đáp án
+    private border: Phaser.GameObjects.Graphics | null = null; // Lưu trữ đối tượng border để cập nhật
+    private currentBorderStyleIndex: number = 0; // Chỉ số của kiểu khung hiện tại
 
     constructor(scene: GamePlayScene) {
         this.scene = scene;
@@ -27,6 +34,7 @@ export default class WorksheetView {
         this.buttonContainer = this.scene.add.container(0, 0);
         this.questionViews = []; // Reset danh sách QuestionView
         this.showAnswers = false; // Reset trạng thái hiển thị đáp án
+        this.currentBorderStyleIndex = 0; // Reset chỉ số kiểu khung
 
         let yOffset = this.scene.scale.height * 0.03;
 
@@ -80,15 +88,7 @@ export default class WorksheetView {
         this.worksheetContainer.setPosition(0, 0);
 
         // Vẽ border
-        const border = this.scene.add.graphics();
-        border.lineStyle(2, 0x000000, 1);
-        border.strokeRect(
-            this.scene.scale.width * 0.01,
-            this.scene.scale.height * 0.01,
-            this.scene.scale.width * 0.98,
-            yOffset + this.scene.scale.height * 0.02
-        );
-        this.worksheetContainer!.add(border);
+        this.drawBorder(yOffset);
 
         // Lưu chiều cao của khung
         this.worksheetHeight = yOffset + this.scene.scale.height * 0.02;
@@ -97,40 +97,91 @@ export default class WorksheetView {
         this.createButtons();
     }
 
+    private drawBorder(yOffset: number): void {
+        // Xóa border cũ nếu có
+        if (this.border) {
+            this.border.destroy();
+        }
+
+        // Lấy kiểu khung hiện tại
+        const style = borderStyles[this.currentBorderStyleIndex];
+
+        // Vẽ border mới
+        this.border = this.scene.add.graphics();
+        this.border.lineStyle(style.lineWidth, style.lineColor, 1);
+
+        if (style.cornerRadius && style.cornerRadius > 0) {
+            this.border.strokeRoundedRect(
+                this.scene.scale.width * 0.01,
+                this.scene.scale.height * 0.01,
+                this.scene.scale.width * 0.98,
+                yOffset + this.scene.scale.height * 0.02,
+                style.cornerRadius
+            );
+        } else {
+            this.border.strokeRect(
+                this.scene.scale.width * 0.01,
+                this.scene.scale.height * 0.01,
+                this.scene.scale.width * 0.98,
+                yOffset + this.scene.scale.height * 0.02
+            );
+        }
+
+        this.worksheetContainer!.add(this.border);
+    }
+
     private createButtons(): void {
         // Tính toán kích thước và padding responsive dựa trên màn hình
         const isSmallScreen = this.scene.scale.width < 480;
         const fontSize = isSmallScreen ? "12px" : "16px";
         const paddingShowAnswers = isSmallScreen
-            ? { left: 8, right: 8, top: 5, bottom: 5 }
-            : { left: 15, right: 15, top: 10, bottom: 10 };
+            ? { left: 5, right: 5, top: 5, bottom: 5 }
+            : { left: 10, right: 10, top: 10, bottom: 10 };
         const paddingCreate = isSmallScreen
             ? { left: 10, right: 10, top: 5, bottom: 5 }
             : { left: 20, right: 20, top: 10, bottom: 10 };
         const paddingExport = isSmallScreen
             ? { left: 8, right: 8, top: 5, bottom: 5 }
             : { left: 15, right: 15, top: 10, bottom: 10 };
+        const paddingChangeBorder = isSmallScreen
+            ? { left: 8, right: 8, top: 5, bottom: 5 }
+            : { left: 15, right: 15, top: 10, bottom: 10 };
+        const paddingResetBorder = isSmallScreen
+            ? { left: 10, right: 10, top: 5, bottom: 5 }
+            : { left: 15, right: 15, top: 10, bottom: 10 };
         const buttonWidthShowAnswers = isSmallScreen
-            ? this.scene.scale.width * 0.3
-            : this.scene.scale.width * 0.2;
+            ? this.scene.scale.width * 0.2
+            : this.scene.scale.width * 0.15;
         const buttonWidthCreate = isSmallScreen
             ? this.scene.scale.width * 0.35
             : this.scene.scale.width * 0.18;
         const buttonWidthExport = isSmallScreen
             ? this.scene.scale.width * 0.2
             : this.scene.scale.width * 0.1;
+        const buttonWidthChangeBorder = isSmallScreen
+            ? this.scene.scale.width * 0.3
+            : this.scene.scale.width * 0.2;
+        const buttonWidthResetBorder = isSmallScreen
+            ? this.scene.scale.width * 0.1
+            : this.scene.scale.width * 0.15;
         const buttonHeight = isSmallScreen
             ? this.scene.scale.width * 0.1
             : this.scene.scale.width * 0.06;
         const buttonXShowAnswers = isSmallScreen
-            ? this.scene.scale.width * 0.4
-            : this.scene.scale.width * 0.5;
+            ? this.scene.scale.width * 0.25
+            : this.scene.scale.width * 0.35;
         const buttonXCreate = isSmallScreen
+            ? this.scene.scale.width * 0.1
+            : this.scene.scale.width * 0.15;
+        const buttonXExport = isSmallScreen
             ? this.scene.scale.width * 0.65
             : this.scene.scale.width * 0.75;
-        const buttonXExport = isSmallScreen
+        const buttonXChangeBorder = isSmallScreen
+            ? this.scene.scale.width * 0.55
+            : this.scene.scale.width * 0.57;
+        const buttonXResetBorder = isSmallScreen
             ? this.scene.scale.width * 0.9
-            : this.scene.scale.width * 0.92;
+            : this.scene.scale.width * 0.9;
 
         // Tạo nút "Show Answers"
         const showAnswersButton = this.scene.add
@@ -376,6 +427,193 @@ export default class WorksheetView {
                 );
             });
 
+        // Tạo nút "Change Border Style"
+        const changeBorderButton = this.scene.add
+            .text(
+                buttonXChangeBorder,
+                this.scene.scale.height * 0.95,
+                "Change Border Style",
+                {
+                    fontFamily: "Roboto",
+                    fontSize: fontSize,
+                    color: "#1E90FF",
+                    padding: paddingChangeBorder,
+                    fixedWidth: buttonWidthChangeBorder,
+                    fixedHeight: buttonHeight,
+                    align: "center",
+                }
+            )
+            .setOrigin(0.5, 0.5);
+
+        const changeBorderButtonBackground = this.scene.add.graphics();
+        changeBorderButtonBackground.fillStyle(0xffffff, 1);
+        changeBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
+        changeBorderButtonBackground.fillRoundedRect(
+            buttonXChangeBorder - buttonWidthChangeBorder / 2,
+            this.scene.scale.height * 0.95 - buttonHeight / 2,
+            buttonWidthChangeBorder,
+            buttonHeight,
+            10
+        );
+        changeBorderButtonBackground.strokeRoundedRect(
+            buttonXChangeBorder - buttonWidthChangeBorder / 2,
+            this.scene.scale.height * 0.95 - buttonHeight / 2,
+            buttonWidthChangeBorder,
+            buttonHeight,
+            10
+        );
+        changeBorderButtonBackground
+            .setInteractive(
+                new Phaser.Geom.Rectangle(
+                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthChangeBorder,
+                    buttonHeight
+                ),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on("pointerdown", () => {
+                // Chuyển sang kiểu khung tiếp theo
+                this.currentBorderStyleIndex =
+                    (this.currentBorderStyleIndex + 1) % borderStyles.length;
+                this.drawBorder(
+                    this.worksheetHeight - this.scene.scale.height * 0.02
+                );
+            })
+            .on("pointerover", () => {
+                changeBorderButton.setStyle({ color: "#40C4FF" });
+                changeBorderButtonBackground.clear();
+                changeBorderButtonBackground.fillStyle(0xffffff, 1);
+                changeBorderButtonBackground.lineStyle(2, 0x40c4ff, 1);
+                changeBorderButtonBackground.fillRoundedRect(
+                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthChangeBorder,
+                    buttonHeight,
+                    10
+                );
+                changeBorderButtonBackground.strokeRoundedRect(
+                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthChangeBorder,
+                    buttonHeight,
+                    10
+                );
+            })
+            .on("pointerout", () => {
+                changeBorderButton.setStyle({ color: "#1E90FF" });
+                changeBorderButtonBackground.clear();
+                changeBorderButtonBackground.fillStyle(0xffffff, 1);
+                changeBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
+                changeBorderButtonBackground.fillRoundedRect(
+                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthChangeBorder,
+                    buttonHeight,
+                    10
+                );
+                changeBorderButtonBackground.strokeRoundedRect(
+                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthChangeBorder,
+                    buttonHeight,
+                    10
+                );
+            });
+
+        // Tạo nút "Reset Border Style"
+        const resetBorderButton = this.scene.add
+            .text(
+                buttonXResetBorder,
+                this.scene.scale.height * 0.95,
+                "Reset Border",
+                {
+                    fontFamily: "Roboto",
+                    fontSize: fontSize,
+                    color: "#1E90FF",
+                    padding: paddingResetBorder,
+                    fixedWidth: buttonWidthResetBorder,
+                    fixedHeight: buttonHeight,
+                    align: "center",
+                }
+            )
+            .setOrigin(0.5, 0.5);
+
+        const resetBorderButtonBackground = this.scene.add.graphics();
+        resetBorderButtonBackground.fillStyle(0xffffff, 1);
+        resetBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
+        resetBorderButtonBackground.fillRoundedRect(
+            buttonXResetBorder - buttonWidthResetBorder / 2,
+            this.scene.scale.height * 0.95 - buttonHeight / 2,
+            buttonWidthResetBorder,
+            buttonHeight,
+            10
+        );
+        resetBorderButtonBackground.strokeRoundedRect(
+            buttonXResetBorder - buttonWidthResetBorder / 2,
+            this.scene.scale.height * 0.95 - buttonHeight / 2,
+            buttonWidthResetBorder,
+            buttonHeight,
+            10
+        );
+        resetBorderButtonBackground
+            .setInteractive(
+                new Phaser.Geom.Rectangle(
+                    buttonXResetBorder - buttonWidthResetBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthResetBorder,
+                    buttonHeight
+                ),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on("pointerdown", () => {
+                // Đặt lại về kiểu khung mặc định
+                this.currentBorderStyleIndex = 0;
+                this.drawBorder(
+                    this.worksheetHeight - this.scene.scale.height * 0.02
+                );
+            })
+            .on("pointerover", () => {
+                resetBorderButton.setStyle({ color: "#40C4FF" });
+                resetBorderButtonBackground.clear();
+                resetBorderButtonBackground.fillStyle(0xffffff, 1);
+                resetBorderButtonBackground.lineStyle(2, 0x40c4ff, 1);
+                resetBorderButtonBackground.fillRoundedRect(
+                    buttonXResetBorder - buttonWidthResetBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthResetBorder,
+                    buttonHeight,
+                    10
+                );
+                resetBorderButtonBackground.strokeRoundedRect(
+                    buttonXResetBorder - buttonWidthResetBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthResetBorder,
+                    buttonHeight,
+                    10
+                );
+            })
+            .on("pointerout", () => {
+                resetBorderButton.setStyle({ color: "#1E90FF" });
+                resetBorderButtonBackground.clear();
+                resetBorderButtonBackground.fillStyle(0xffffff, 1);
+                resetBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
+                resetBorderButtonBackground.fillRoundedRect(
+                    buttonXResetBorder - buttonWidthResetBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthResetBorder,
+                    buttonHeight,
+                    10
+                );
+                resetBorderButtonBackground.strokeRoundedRect(
+                    buttonXResetBorder - buttonWidthResetBorder / 2,
+                    this.scene.scale.height * 0.95 - buttonHeight / 2,
+                    buttonWidthResetBorder,
+                    buttonHeight,
+                    10
+                );
+            });
+
         this.buttonContainer!.add([
             showAnswersButtonBackground,
             showAnswersButton,
@@ -383,6 +621,10 @@ export default class WorksheetView {
             createButton,
             exportButtonBackground,
             exportButton,
+            changeBorderButtonBackground,
+            changeBorderButton,
+            resetBorderButtonBackground,
+            resetBorderButton,
         ]);
     }
 
