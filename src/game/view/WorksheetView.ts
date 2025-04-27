@@ -10,6 +10,7 @@ import {
     defaultBorderStyle,
     BorderStyle,
 } from "../view/BorderService";
+import { GraphicsButton } from "mct-common";
 
 export default class WorksheetView {
     private scene: GamePlayScene;
@@ -20,6 +21,8 @@ export default class WorksheetView {
     private showAnswers: boolean = false; // Trạng thái hiển thị đáp án
     private border: Phaser.GameObjects.Graphics | null = null; // Lưu trữ đối tượng border để cập nhật
     private currentBorderStyleIndex: number = 0; // Chỉ số của kiểu khung hiện tại
+    private showAnswersButton: GraphicsButton | null = null; // Lưu trữ nút "Show Answers"
+    private showAnswersButtonText: string = "Show Answers"; // Lưu trữ text hiện tại của nút "Show Answers"
 
     constructor(scene: GamePlayScene) {
         this.scene = scene;
@@ -35,6 +38,7 @@ export default class WorksheetView {
         this.questionViews = []; // Reset danh sách QuestionView
         this.showAnswers = false; // Reset trạng thái hiển thị đáp án
         this.currentBorderStyleIndex = 0; // Reset chỉ số kiểu khung
+        this.showAnswersButtonText = "Show Answers"; // Reset text của nút
 
         let yOffset = this.scene.scale.height * 0.03;
 
@@ -93,7 +97,7 @@ export default class WorksheetView {
         // Lưu chiều cao của khung
         this.worksheetHeight = yOffset + this.scene.scale.height * 0.02;
 
-        // Tạo các nút responsive
+        // Tạo các nút
         this.createButtons();
     }
 
@@ -130,500 +134,277 @@ export default class WorksheetView {
         this.worksheetContainer!.add(this.border);
     }
 
+    private addButtonAnimation(button: GraphicsButton): void {
+        if (this.scene.tweens) {
+            this.scene.tweens.add({
+                targets: button,
+                scale: 0.9,
+                duration: 100,
+                yoyo: true,
+            });
+        } else {
+            console.warn("Scene tweens are not available for animation.");
+        }
+    }
+
+    private createShowAnswersButton(
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        fontSize: number
+    ): GraphicsButton {
+        const button = new GraphicsButton({
+            scene: this.scene,
+            x: x,
+            y: y,
+            width: width,
+            height: height,
+            text: this.showAnswersButtonText,
+            fontStyle: "Roboto",
+            fontSize: fontSize,
+            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            padding: 10,
+            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            shape: "rectangle",
+            borderRadius: 10,
+            cursor: "pointer",
+        });
+
+        // Tắt interactive mặc định của GraphicsButton để tránh xung đột
+        button.disableInteractive();
+
+        // Gắn sự kiện trực tiếp lên button
+        button.setInteractive({ useHandCursor: true });
+
+        button.on("pointerover", () => {
+            button.setAlpha(0.7);
+        });
+
+        button.on("pointerout", () => {
+            button.setAlpha(1);
+        });
+
+        button.on("pointerup", () => {
+            this.showAnswers = !this.showAnswers;
+            this.showAnswersButtonText = this.showAnswers
+                ? "Hide Answers"
+                : "Show Answers";
+            // Xóa nút cũ
+            this.showAnswersButton?.destroy();
+            // Tạo nút mới với text đã cập nhật
+            this.showAnswersButton = this.createShowAnswersButton(
+                x,
+                y,
+                width,
+                height,
+                fontSize
+            );
+            // Thêm nút mới vào buttonContainer
+            this.buttonContainer!.add(this.showAnswersButton);
+            this.questionViews.forEach((view) =>
+                view.toggleAnswers(this.showAnswers)
+            );
+            // Thêm animation cho nút
+            this.addButtonAnimation(this.showAnswersButton);
+        });
+
+        return button;
+    }
+
     private createButtons(): void {
-        // Tính toán kích thước và padding responsive dựa trên màn hình
-        const isSmallScreen = this.scene.scale.width < 480;
-        const fontSize = isSmallScreen ? "12px" : "16px";
-        const paddingShowAnswers = isSmallScreen
-            ? { left: 5, right: 5, top: 5, bottom: 5 }
-            : { left: 10, right: 10, top: 10, bottom: 10 };
-        const paddingCreate = isSmallScreen
-            ? { left: 10, right: 10, top: 5, bottom: 5 }
-            : { left: 20, right: 20, top: 10, bottom: 10 };
-        const paddingExport = isSmallScreen
-            ? { left: 8, right: 8, top: 5, bottom: 5 }
-            : { left: 15, right: 15, top: 10, bottom: 10 };
-        const paddingChangeBorder = isSmallScreen
-            ? { left: 8, right: 8, top: 5, bottom: 5 }
-            : { left: 15, right: 15, top: 10, bottom: 10 };
-        const paddingResetBorder = isSmallScreen
-            ? { left: 10, right: 10, top: 5, bottom: 5 }
-            : { left: 15, right: 15, top: 10, bottom: 10 };
-        const buttonWidthShowAnswers = isSmallScreen
-            ? this.scene.scale.width * 0.2
-            : this.scene.scale.width * 0.15;
-        const buttonWidthCreate = isSmallScreen
-            ? this.scene.scale.width * 0.35
-            : this.scene.scale.width * 0.18;
-        const buttonWidthExport = isSmallScreen
-            ? this.scene.scale.width * 0.2
-            : this.scene.scale.width * 0.1;
-        const buttonWidthChangeBorder = isSmallScreen
-            ? this.scene.scale.width * 0.3
-            : this.scene.scale.width * 0.2;
-        const buttonWidthResetBorder = isSmallScreen
-            ? this.scene.scale.width * 0.1
-            : this.scene.scale.width * 0.15;
-        const buttonHeight = isSmallScreen
-            ? this.scene.scale.width * 0.1
-            : this.scene.scale.width * 0.06;
-        const buttonXShowAnswers = isSmallScreen
-            ? this.scene.scale.width * 0.25
-            : this.scene.scale.width * 0.35;
-        const buttonXCreate = isSmallScreen
-            ? this.scene.scale.width * 0.1
-            : this.scene.scale.width * 0.15;
-        const buttonXExport = isSmallScreen
-            ? this.scene.scale.width * 0.65
-            : this.scene.scale.width * 0.75;
-        const buttonXChangeBorder = isSmallScreen
-            ? this.scene.scale.width * 0.55
-            : this.scene.scale.width * 0.57;
-        const buttonXResetBorder = isSmallScreen
-            ? this.scene.scale.width * 0.9
-            : this.scene.scale.width * 0.9;
+        // Các giá trị kích thước và vị trí đã được định nghĩa sẵn
+        const fontSize = 16;
+        const buttonWidthShowAnswers = this.scene.scale.width * 0.15;
+        const buttonWidthCreate = this.scene.scale.width * 0.18;
+        const buttonWidthExport = this.scene.scale.width * 0.1;
+        const buttonWidthChangeBorder = this.scene.scale.width * 0.2;
+        const buttonWidthResetBorder = this.scene.scale.width * 0.15;
+        const buttonHeight = this.scene.scale.width * 0.06;
+        const buttonXShowAnswers = this.scene.scale.width * 0.35;
+        const buttonXCreate = this.scene.scale.width * 0.15;
+        const buttonXExport = this.scene.scale.width * 0.75;
+        const buttonXChangeBorder = this.scene.scale.width * 0.57;
+        const buttonXResetBorder = this.scene.scale.width * 0.9;
+        const buttonY = this.scene.scale.height * 0.95;
 
-        // Tạo nút "Show Answers"
-        const showAnswersButton = this.scene.add
-            .text(
+        // Tạo nút "Show Answers" bằng GraphicsButton
+        this.showAnswersButton = this.createShowAnswersButton(
+            buttonXShowAnswers,
+            buttonY,
+            buttonWidthShowAnswers,
+            buttonHeight,
+            fontSize
+        );
+
+        // Tạo nút "Create Worksheet" bằng GraphicsButton
+        const createButton = new GraphicsButton({
+            scene: this.scene,
+            x: buttonXCreate,
+            y: buttonY,
+            width: buttonWidthCreate,
+            height: buttonHeight,
+            text: "Create Worksheet",
+            fontStyle: "Roboto",
+            fontSize: fontSize,
+            textColor: "#ffffff",
+            padding: 10,
+            backgroundColor: "#1E90FF",
+            shape: "rectangle",
+            borderRadius: 10,
+            cursor: "pointer",
+        });
+
+        // Tắt interactive mặc định và tự quản lý sự kiện
+        createButton.disableInteractive();
+        createButton.setInteractive({ useHandCursor: true });
+
+        createButton.on("pointerover", () => {
+            createButton.setAlpha(0.7);
+        });
+
+        createButton.on("pointerout", () => {
+            createButton.setAlpha(1);
+        });
+
+        createButton.on("pointerup", () => {
+            this.scene.createWorksheet();
+            this.showAnswers = false; // Reset trạng thái hiển thị đáp án
+            this.showAnswersButtonText = "Show Answers";
+            // Xóa nút "Show Answers" cũ
+            this.showAnswersButton?.destroy();
+            // Tạo nút "Show Answers" mới với text đã cập nhật
+            this.showAnswersButton = this.createShowAnswersButton(
                 buttonXShowAnswers,
-                this.scene.scale.height * 0.95,
-                this.showAnswers ? "Hide Answers" : "Show Answers",
-                {
-                    fontFamily: "Roboto",
-                    fontSize: fontSize,
-                    color: "#1E90FF",
-                    padding: paddingShowAnswers,
-                    fixedWidth: buttonWidthShowAnswers,
-                    fixedHeight: buttonHeight,
-                    align: "center",
-                }
-            )
-            .setOrigin(0.5, 0.5);
+                buttonY,
+                buttonWidthShowAnswers,
+                buttonHeight,
+                fontSize
+            );
+            // Thêm nút mới vào buttonContainer
+            this.buttonContainer!.add(this.showAnswersButton);
+            // Thêm animation cho nút
+            this.addButtonAnimation(createButton);
+        });
 
-        const showAnswersButtonBackground = this.scene.add.graphics();
-        showAnswersButtonBackground.fillStyle(0xffffff, 1);
-        showAnswersButtonBackground.lineStyle(2, 0x1e90ff, 1);
-        showAnswersButtonBackground.fillRoundedRect(
-            buttonXShowAnswers - buttonWidthShowAnswers / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthShowAnswers,
-            buttonHeight,
-            10
-        );
-        showAnswersButtonBackground.strokeRoundedRect(
-            buttonXShowAnswers - buttonWidthShowAnswers / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthShowAnswers,
-            buttonHeight,
-            10
-        );
-        showAnswersButtonBackground
-            .setInteractive(
-                new Phaser.Geom.Rectangle(
-                    buttonXShowAnswers - buttonWidthShowAnswers / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthShowAnswers,
-                    buttonHeight
-                ),
-                Phaser.Geom.Rectangle.Contains
-            )
-            .on("pointerup", () => {
-                this.showAnswers = !this.showAnswers;
-                showAnswersButton.setText(
-                    this.showAnswers ? "Hide Answers" : "Show Answers"
-                );
-                this.questionViews.forEach((view) =>
-                    view.toggleAnswers(this.showAnswers)
-                );
-            })
-            .on("pointerover", () => {
-                showAnswersButton.setStyle({ color: "#40C4FF" });
-                showAnswersButtonBackground.clear();
-                showAnswersButtonBackground.fillStyle(0xffffff, 1);
-                showAnswersButtonBackground.lineStyle(2, 0x40c4ff, 1);
-                showAnswersButtonBackground.fillRoundedRect(
-                    buttonXShowAnswers - buttonWidthShowAnswers / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthShowAnswers,
-                    buttonHeight,
-                    10
-                );
-                showAnswersButtonBackground.strokeRoundedRect(
-                    buttonXShowAnswers - buttonWidthShowAnswers / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthShowAnswers,
-                    buttonHeight,
-                    10
-                );
-            })
-            .on("pointerout", () => {
-                showAnswersButton.setStyle({ color: "#1E90FF" });
-                showAnswersButtonBackground.clear();
-                showAnswersButtonBackground.fillStyle(0xffffff, 1);
-                showAnswersButtonBackground.lineStyle(2, 0x1e90ff, 1);
-                showAnswersButtonBackground.fillRoundedRect(
-                    buttonXShowAnswers - buttonWidthShowAnswers / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthShowAnswers,
-                    buttonHeight,
-                    10
-                );
-                showAnswersButtonBackground.strokeRoundedRect(
-                    buttonXShowAnswers - buttonWidthShowAnswers / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthShowAnswers,
-                    buttonHeight,
-                    10
-                );
-            });
+        // Tạo nút "Export" bằng GraphicsButton
+        const exportButton = new GraphicsButton({
+            scene: this.scene,
+            x: buttonXExport,
+            y: buttonY,
+            width: buttonWidthExport,
+            height: buttonHeight,
+            text: "Export",
+            fontStyle: "Roboto",
+            fontSize: fontSize,
+            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            padding: 10,
+            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            shape: "rectangle",
+            borderRadius: 10,
+            cursor: "pointer",
+        });
 
-        // Tạo nút "Create Worksheet"
-        const createButton = this.scene.add
-            .text(
-                buttonXCreate,
-                this.scene.scale.height * 0.95,
-                "Create Worksheet",
-                {
-                    fontFamily: "Roboto",
-                    fontSize: fontSize,
-                    color: "#ffffff",
-                    padding: paddingCreate,
-                    fixedWidth: buttonWidthCreate,
-                    fixedHeight: buttonHeight,
-                    align: "center",
-                }
-            )
-            .setOrigin(0.5, 0.5);
+        exportButton.disableInteractive();
+        exportButton.setInteractive({ useHandCursor: true });
 
-        const createButtonBackground = this.scene.add.graphics();
-        createButtonBackground.fillStyle(0x1e90ff, 1);
-        createButtonBackground.fillRoundedRect(
-            buttonXCreate - buttonWidthCreate / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthCreate,
-            buttonHeight,
-            10
-        );
-        createButtonBackground
-            .setInteractive(
-                new Phaser.Geom.Rectangle(
-                    buttonXCreate - buttonWidthCreate / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthCreate,
-                    buttonHeight
-                ),
-                Phaser.Geom.Rectangle.Contains
-            )
-            .on("pointerdown", () => {
-                this.scene.createWorksheet();
-                this.showAnswers = false; // Reset trạng thái hiển thị đáp án
-                showAnswersButton.setText("Show Answers");
-            })
-            .on("pointerover", () => {
-                createButtonBackground.clear();
-                createButtonBackground.fillStyle(0x40c4ff, 1);
-                createButtonBackground.fillRoundedRect(
-                    buttonXCreate - buttonWidthCreate / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthCreate,
-                    buttonHeight,
-                    10
-                );
-            })
-            .on("pointerout", () => {
-                createButtonBackground.clear();
-                createButtonBackground.fillStyle(0x1e90ff, 1);
-                createButtonBackground.fillRoundedRect(
-                    buttonXCreate - buttonWidthCreate / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthCreate,
-                    buttonHeight,
-                    10
-                );
-            });
+        exportButton.on("pointerover", () => {
+            exportButton.setAlpha(0.7);
+        });
 
-        // Tạo nút "Export"
-        const exportButton = this.scene.add
-            .text(buttonXExport, this.scene.scale.height * 0.95, "Export", {
-                fontFamily: "Roboto",
-                fontSize: fontSize,
-                color: "#1E90FF",
-                padding: paddingExport,
-                fixedWidth: buttonWidthExport,
-                fixedHeight: buttonHeight,
-                align: "center",
-            })
-            .setOrigin(0.5, 0.5);
+        exportButton.on("pointerout", () => {
+            exportButton.setAlpha(1);
+        });
 
-        const exportButtonBackground = this.scene.add.graphics();
-        exportButtonBackground.fillStyle(0xffffff, 1);
-        exportButtonBackground.lineStyle(2, 0x1e90ff, 1);
-        exportButtonBackground.fillRoundedRect(
-            buttonXExport - buttonWidthExport / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthExport,
-            buttonHeight,
-            10
-        );
-        exportButtonBackground.strokeRoundedRect(
-            buttonXExport - buttonWidthExport / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthExport,
-            buttonHeight,
-            10
-        );
-        exportButtonBackground
-            .setInteractive(
-                new Phaser.Geom.Rectangle(
-                    buttonXExport - buttonWidthExport / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthExport,
-                    buttonHeight
-                ),
-                Phaser.Geom.Rectangle.Contains
-            )
-            .on("pointerdown", () =>
-                this.scene.getWorksheetController().exportToPDF()
-            )
-            .on("pointerover", () => {
-                exportButton.setStyle({ color: "#40C4FF" });
-                exportButtonBackground.clear();
-                exportButtonBackground.fillStyle(0xffffff, 1);
-                exportButtonBackground.lineStyle(2, 0x40c4ff, 1);
-                exportButtonBackground.fillRoundedRect(
-                    buttonXExport - buttonWidthExport / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthExport,
-                    buttonHeight,
-                    10
-                );
-                exportButtonBackground.strokeRoundedRect(
-                    buttonXExport - buttonWidthExport / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthExport,
-                    buttonHeight,
-                    10
-                );
-            })
-            .on("pointerout", () => {
-                exportButton.setStyle({ color: "#1E90FF" });
-                exportButtonBackground.clear();
-                exportButtonBackground.fillStyle(0xffffff, 1);
-                exportButtonBackground.lineStyle(2, 0x1e90ff, 1);
-                exportButtonBackground.fillRoundedRect(
-                    buttonXExport - buttonWidthExport / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthExport,
-                    buttonHeight,
-                    10
-                );
-                exportButtonBackground.strokeRoundedRect(
-                    buttonXExport - buttonWidthExport / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthExport,
-                    buttonHeight,
-                    10
-                );
-            });
+        exportButton.on("pointerup", () => {
+            this.scene.getWorksheetController().exportToPDF();
+            // Thêm animation cho nút
+            this.addButtonAnimation(exportButton);
+        });
 
-        // Tạo nút "Change Border Style"
-        const changeBorderButton = this.scene.add
-            .text(
-                buttonXChangeBorder,
-                this.scene.scale.height * 0.95,
-                "Change Border Style",
-                {
-                    fontFamily: "Roboto",
-                    fontSize: fontSize,
-                    color: "#1E90FF",
-                    padding: paddingChangeBorder,
-                    fixedWidth: buttonWidthChangeBorder,
-                    fixedHeight: buttonHeight,
-                    align: "center",
-                }
-            )
-            .setOrigin(0.5, 0.5);
+        // Tạo nút "Change Border Style" bằng GraphicsButton
+        const changeBorderButton = new GraphicsButton({
+            scene: this.scene,
+            x: buttonXChangeBorder,
+            y: buttonY,
+            width: buttonWidthChangeBorder,
+            height: buttonHeight,
+            text: "Change Border Style",
+            fontStyle: "Roboto",
+            fontSize: fontSize,
+            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            padding: 10,
+            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            shape: "rectangle",
+            borderRadius: 10,
+            cursor: "pointer",
+        });
 
-        const changeBorderButtonBackground = this.scene.add.graphics();
-        changeBorderButtonBackground.fillStyle(0xffffff, 1);
-        changeBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
-        changeBorderButtonBackground.fillRoundedRect(
-            buttonXChangeBorder - buttonWidthChangeBorder / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthChangeBorder,
-            buttonHeight,
-            10
-        );
-        changeBorderButtonBackground.strokeRoundedRect(
-            buttonXChangeBorder - buttonWidthChangeBorder / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthChangeBorder,
-            buttonHeight,
-            10
-        );
-        changeBorderButtonBackground
-            .setInteractive(
-                new Phaser.Geom.Rectangle(
-                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthChangeBorder,
-                    buttonHeight
-                ),
-                Phaser.Geom.Rectangle.Contains
-            )
-            .on("pointerdown", () => {
-                // Chuyển sang kiểu khung tiếp theo
-                this.currentBorderStyleIndex =
-                    (this.currentBorderStyleIndex + 1) % borderStyles.length;
-                this.drawBorder(
-                    this.worksheetHeight - this.scene.scale.height * 0.02
-                );
-            })
-            .on("pointerover", () => {
-                changeBorderButton.setStyle({ color: "#40C4FF" });
-                changeBorderButtonBackground.clear();
-                changeBorderButtonBackground.fillStyle(0xffffff, 1);
-                changeBorderButtonBackground.lineStyle(2, 0x40c4ff, 1);
-                changeBorderButtonBackground.fillRoundedRect(
-                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthChangeBorder,
-                    buttonHeight,
-                    10
-                );
-                changeBorderButtonBackground.strokeRoundedRect(
-                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthChangeBorder,
-                    buttonHeight,
-                    10
-                );
-            })
-            .on("pointerout", () => {
-                changeBorderButton.setStyle({ color: "#1E90FF" });
-                changeBorderButtonBackground.clear();
-                changeBorderButtonBackground.fillStyle(0xffffff, 1);
-                changeBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
-                changeBorderButtonBackground.fillRoundedRect(
-                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthChangeBorder,
-                    buttonHeight,
-                    10
-                );
-                changeBorderButtonBackground.strokeRoundedRect(
-                    buttonXChangeBorder - buttonWidthChangeBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthChangeBorder,
-                    buttonHeight,
-                    10
-                );
-            });
+        changeBorderButton.disableInteractive();
+        changeBorderButton.setInteractive({ useHandCursor: true });
 
-        // Tạo nút "Reset Border Style"
-        const resetBorderButton = this.scene.add
-            .text(
-                buttonXResetBorder,
-                this.scene.scale.height * 0.95,
-                "Reset Border",
-                {
-                    fontFamily: "Roboto",
-                    fontSize: fontSize,
-                    color: "#1E90FF",
-                    padding: paddingResetBorder,
-                    fixedWidth: buttonWidthResetBorder,
-                    fixedHeight: buttonHeight,
-                    align: "center",
-                }
-            )
-            .setOrigin(0.5, 0.5);
+        changeBorderButton.on("pointerover", () => {
+            changeBorderButton.setAlpha(0.7);
+        });
 
-        const resetBorderButtonBackground = this.scene.add.graphics();
-        resetBorderButtonBackground.fillStyle(0xffffff, 1);
-        resetBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
-        resetBorderButtonBackground.fillRoundedRect(
-            buttonXResetBorder - buttonWidthResetBorder / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthResetBorder,
-            buttonHeight,
-            10
-        );
-        resetBorderButtonBackground.strokeRoundedRect(
-            buttonXResetBorder - buttonWidthResetBorder / 2,
-            this.scene.scale.height * 0.95 - buttonHeight / 2,
-            buttonWidthResetBorder,
-            buttonHeight,
-            10
-        );
-        resetBorderButtonBackground
-            .setInteractive(
-                new Phaser.Geom.Rectangle(
-                    buttonXResetBorder - buttonWidthResetBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthResetBorder,
-                    buttonHeight
-                ),
-                Phaser.Geom.Rectangle.Contains
-            )
-            .on("pointerdown", () => {
-                // Đặt lại về kiểu khung mặc định
-                this.currentBorderStyleIndex = 0;
-                this.drawBorder(
-                    this.worksheetHeight - this.scene.scale.height * 0.02
-                );
-            })
-            .on("pointerover", () => {
-                resetBorderButton.setStyle({ color: "#40C4FF" });
-                resetBorderButtonBackground.clear();
-                resetBorderButtonBackground.fillStyle(0xffffff, 1);
-                resetBorderButtonBackground.lineStyle(2, 0x40c4ff, 1);
-                resetBorderButtonBackground.fillRoundedRect(
-                    buttonXResetBorder - buttonWidthResetBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthResetBorder,
-                    buttonHeight,
-                    10
-                );
-                resetBorderButtonBackground.strokeRoundedRect(
-                    buttonXResetBorder - buttonWidthResetBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthResetBorder,
-                    buttonHeight,
-                    10
-                );
-            })
-            .on("pointerout", () => {
-                resetBorderButton.setStyle({ color: "#1E90FF" });
-                resetBorderButtonBackground.clear();
-                resetBorderButtonBackground.fillStyle(0xffffff, 1);
-                resetBorderButtonBackground.lineStyle(2, 0x1e90ff, 1);
-                resetBorderButtonBackground.fillRoundedRect(
-                    buttonXResetBorder - buttonWidthResetBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthResetBorder,
-                    buttonHeight,
-                    10
-                );
-                resetBorderButtonBackground.strokeRoundedRect(
-                    buttonXResetBorder - buttonWidthResetBorder / 2,
-                    this.scene.scale.height * 0.95 - buttonHeight / 2,
-                    buttonWidthResetBorder,
-                    buttonHeight,
-                    10
-                );
-            });
+        changeBorderButton.on("pointerout", () => {
+            changeBorderButton.setAlpha(1);
+        });
 
+        changeBorderButton.on("pointerup", () => {
+            this.currentBorderStyleIndex =
+                (this.currentBorderStyleIndex + 1) % borderStyles.length;
+            this.drawBorder(
+                this.worksheetHeight - this.scene.scale.height * 0.02
+            );
+            // Thêm animation cho nút
+            this.addButtonAnimation(changeBorderButton);
+        });
+
+        // Tạo nút "Reset Border" bằng GraphicsButton
+        const resetBorderButton = new GraphicsButton({
+            scene: this.scene,
+            x: buttonXResetBorder,
+            y: buttonY,
+            width: buttonWidthResetBorder,
+            height: buttonHeight,
+            text: "Reset Border",
+            fontStyle: "Roboto",
+            fontSize: fontSize,
+            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            padding: 10,
+            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            shape: "rectangle",
+            borderRadius: 10,
+            cursor: "pointer",
+        });
+
+        resetBorderButton.disableInteractive();
+        resetBorderButton.setInteractive({ useHandCursor: true });
+
+        resetBorderButton.on("pointerover", () => {
+            resetBorderButton.setAlpha(0.7);
+        });
+
+        resetBorderButton.on("pointerout", () => {
+            resetBorderButton.setAlpha(1);
+        });
+
+        resetBorderButton.on("pointerup", () => {
+            this.currentBorderStyleIndex = 0;
+            this.drawBorder(
+                this.worksheetHeight - this.scene.scale.height * 0.02
+            );
+            // Thêm animation cho nút
+            this.addButtonAnimation(resetBorderButton);
+        });
+
+        // Thêm các nút vào buttonContainer
         this.buttonContainer!.add([
-            showAnswersButtonBackground,
-            showAnswersButton,
-            createButtonBackground,
+            this.showAnswersButton,
             createButton,
-            exportButtonBackground,
             exportButton,
-            changeBorderButtonBackground,
             changeBorderButton,
-            resetBorderButtonBackground,
             resetBorderButton,
         ]);
     }
