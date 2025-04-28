@@ -2,13 +2,6 @@ import Phaser from "phaser";
 import WorksheetController from "../controllers/WorksheetController";
 import WorksheetView from "../view/WorksheetView";
 // Tải font từ Google Fonts
-const loadFont = () => {
-    const link = document.createElement("link");
-    link.href =
-        "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-};
 
 export default class GamePlayScene extends Phaser.Scene {
     private worksheetController: WorksheetController;
@@ -19,7 +12,23 @@ export default class GamePlayScene extends Phaser.Scene {
     }
 
     preload(): void {
-        loadFont();
+        this.load.script(
+            "webfont",
+            "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"
+        );
+        this.load.on("complete", () => {
+            (window as any).WebFont.load({
+                google: {
+                    families: ["Nunito:400,400i,700,700i"],
+                },
+                active: () => {
+                    console.log("Font Nunito loaded successfully");
+                },
+                inactive: () => {
+                    console.error("Failed to load font Nunito");
+                },
+            });
+        });
     }
 
     create(): void {

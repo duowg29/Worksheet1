@@ -30,19 +30,6 @@ export default class ExportPopup extends BasePopup {
             "Chọn định dạng và đặt tên file"
         );
 
-        // Tạo trường nhập tên file
-        this.fileNameInput = this.add
-            .dom(0, -height / 2 + 100, "input", {
-                type: "text",
-                placeholder: "Nhập tên file",
-                fontSize: "16px",
-                padding: "10px",
-                width: "200px",
-                border: "2px solid #1E90FF",
-                borderRadius: "5px",
-            })
-            .setOrigin(0.5);
-
         // Tạo các nút chọn định dạng (PDF, PNG, JPG)
         const formats = ["PDF", "PNG", "JPG"];
         this.formatButtons = []; // Reset mảng nút định dạng
@@ -54,7 +41,7 @@ export default class ExportPopup extends BasePopup {
                 width: 80,
                 height: 40,
                 text: format,
-                fontStyle: "Roboto",
+                fontStyle: "Nunito",
                 fontSize: 16,
                 textColor:
                     format === this.selectedFormat ? "#ffffff" : "#1E90FF",
@@ -92,6 +79,19 @@ export default class ExportPopup extends BasePopup {
             this.popupContainer.add(button);
         });
 
+        // Tạo trường nhập tên file (di chuyển xuống dưới các nút định dạng)
+        this.fileNameInput = this.add
+            .dom(0, -height / 2 + 220, "input", {
+                type: "text",
+                placeholder: "Nhập tên file",
+                fontSize: "16px",
+                padding: "10px",
+                width: "200px",
+                border: "2px solid #1E90FF",
+                borderRadius: "5px",
+            })
+            .setOrigin(0.5);
+
         // Tạo nút "Hủy"
         const cancelButton = new GraphicsButton({
             scene: this,
@@ -100,7 +100,7 @@ export default class ExportPopup extends BasePopup {
             width: 120,
             height: 40,
             text: "Hủy",
-            fontStyle: "Roboto",
+            fontStyle: "Nunito",
             fontSize: 16,
             textColor: "#ffffff",
             padding: 10,
@@ -133,7 +133,7 @@ export default class ExportPopup extends BasePopup {
             width: 120,
             height: 40,
             text: "Export",
-            fontStyle: "Roboto",
+            fontStyle: "Nunito",
             fontSize: 16,
             textColor: "#ffffff",
             padding: 10,

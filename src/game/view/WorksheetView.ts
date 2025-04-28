@@ -56,7 +56,7 @@ export default class WorksheetView {
                     yOffset,
                     "Equivalent Ratios",
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.035}px`,
                         color: "#000",
                         fontStyle: "bold",
@@ -162,7 +162,7 @@ export default class WorksheetView {
             width: width,
             height: height,
             text: this.showAnswersButtonText,
-            fontStyle: "Roboto",
+            fontStyle: "Nunito",
             fontSize: fontSize,
             textColor: "#ffffff",
             padding: 10,
@@ -214,29 +214,39 @@ export default class WorksheetView {
     }
 
     private createButtons(): void {
-        // Các giá trị kích thước và vị trí đã được định nghĩa sẵn
+        // Các giá trị kích thước và vị trí
         const fontSize = 16;
-        const buttonWidthShowAnswers = this.scene.scale.width * 0.15;
         const buttonWidthCreate = this.scene.scale.width * 0.18;
-        const buttonWidthExport = this.scene.scale.width * 0.1;
+        const buttonWidthShowAnswers = this.scene.scale.width * 0.15;
         const buttonWidthChangeBorder = this.scene.scale.width * 0.2;
+        const buttonWidthExport = this.scene.scale.width * 0.1;
         const buttonWidthResetBorder = this.scene.scale.width * 0.15;
         const buttonHeight = this.scene.scale.width * 0.06;
-        const buttonXShowAnswers = this.scene.scale.width * 0.35;
-        const buttonXCreate = this.scene.scale.width * 0.15;
-        const buttonXExport = this.scene.scale.width * 0.75;
-        const buttonXChangeBorder = this.scene.scale.width * 0.57;
-        const buttonXResetBorder = this.scene.scale.width * 0.9;
         const buttonY = this.scene.scale.height * 0.95;
 
-        // Tạo nút "Show Answers" bằng GraphicsButton
-        this.showAnswersButton = this.createShowAnswersButton(
-            buttonXShowAnswers,
-            buttonY,
-            buttonWidthShowAnswers,
-            buttonHeight,
-            fontSize
-        );
+        // Tính toán vị trí x để các nút cách đều nhau
+        const numberOfButtons = 5;
+        const totalButtonWidth =
+            buttonWidthCreate +
+            buttonWidthShowAnswers +
+            buttonWidthChangeBorder +
+            buttonWidthExport +
+            buttonWidthResetBorder;
+        const usableWidth = this.scene.scale.width * 0.9; // Từ 5% đến 95% chiều rộng màn hình
+        const startX = this.scene.scale.width * 0.05; // Bắt đầu từ 5% chiều rộng màn hình
+        const gap = (usableWidth - totalButtonWidth) / (numberOfButtons - 1); // Khoảng cách giữa các nút
+
+        // Tính vị trí x cho từng nút
+        let currentX = startX;
+        const buttonXCreate = currentX + buttonWidthCreate / 2;
+        currentX += buttonWidthCreate + gap;
+        const buttonXShowAnswers = currentX + buttonWidthShowAnswers / 2;
+        currentX += buttonWidthShowAnswers + gap;
+        const buttonXChangeBorder = currentX + buttonWidthChangeBorder / 2;
+        currentX += buttonWidthChangeBorder + gap;
+        const buttonXExport = currentX + buttonWidthExport / 2;
+        currentX += buttonWidthExport + gap;
+        const buttonXResetBorder = currentX + buttonWidthResetBorder / 2;
 
         // Tạo nút "Create Worksheet" bằng GraphicsButton
         const createButton = new GraphicsButton({
@@ -246,7 +256,7 @@ export default class WorksheetView {
             width: buttonWidthCreate,
             height: buttonHeight,
             text: "Create Worksheet",
-            fontStyle: "Roboto",
+            fontStyle: "Nunito",
             fontSize: fontSize,
             textColor: "#ffffff",
             padding: 10,
@@ -256,7 +266,6 @@ export default class WorksheetView {
             cursor: "pointer",
         });
 
-        // Tắt interactive mặc định và tự quản lý sự kiện
         createButton.disableInteractive();
         createButton.setInteractive({ useHandCursor: true });
 
@@ -288,6 +297,54 @@ export default class WorksheetView {
             this.addButtonAnimation(createButton);
         });
 
+        // Tạo nút "Show Answers" bằng GraphicsButton
+        this.showAnswersButton = this.createShowAnswersButton(
+            buttonXShowAnswers,
+            buttonY,
+            buttonWidthShowAnswers,
+            buttonHeight,
+            fontSize
+        );
+
+        // Tạo nút "Change Border Style" bằng GraphicsButton
+        const changeBorderButton = new GraphicsButton({
+            scene: this.scene,
+            x: buttonXChangeBorder,
+            y: buttonY,
+            width: buttonWidthChangeBorder,
+            height: buttonHeight,
+            text: "Change Border Style",
+            fontStyle: "Nunito",
+            fontSize: fontSize,
+            textColor: "#ffffff",
+            padding: 10,
+            backgroundColor: "#1E90FF",
+            shape: "rectangle",
+            borderRadius: 10,
+            cursor: "pointer",
+        });
+
+        changeBorderButton.disableInteractive();
+        changeBorderButton.setInteractive({ useHandCursor: true });
+
+        changeBorderButton.on("pointerover", () => {
+            changeBorderButton.setAlpha(0.7);
+        });
+
+        changeBorderButton.on("pointerout", () => {
+            changeBorderButton.setAlpha(1);
+        });
+
+        changeBorderButton.on("pointerup", () => {
+            this.currentBorderStyleIndex =
+                (this.currentBorderStyleIndex + 1) % borderStyles.length;
+            this.drawBorder(
+                this.worksheetHeight - this.scene.scale.height * 0.02
+            );
+            // Thêm animation cho nút
+            this.addButtonAnimation(changeBorderButton);
+        });
+
         // Tạo nút "Export" bằng GraphicsButton
         const exportButton = new GraphicsButton({
             scene: this.scene,
@@ -296,7 +353,7 @@ export default class WorksheetView {
             width: buttonWidthExport,
             height: buttonHeight,
             text: "Export",
-            fontStyle: "Roboto",
+            fontStyle: "Nunito",
             fontSize: fontSize,
             textColor: "#ffffff",
             padding: 10,
@@ -347,45 +404,6 @@ export default class WorksheetView {
             this.addButtonAnimation(exportButton);
         });
 
-        // Tạo nút "Change Border Style" bằng GraphicsButton
-        const changeBorderButton = new GraphicsButton({
-            scene: this.scene,
-            x: buttonXChangeBorder,
-            y: buttonY,
-            width: buttonWidthChangeBorder,
-            height: buttonHeight,
-            text: "Change Border Style",
-            fontStyle: "Roboto",
-            fontSize: fontSize,
-            textColor: "#ffffff",
-            padding: 10,
-            backgroundColor: "#1E90FF",
-            shape: "rectangle",
-            borderRadius: 10,
-            cursor: "pointer",
-        });
-
-        changeBorderButton.disableInteractive();
-        changeBorderButton.setInteractive({ useHandCursor: true });
-
-        changeBorderButton.on("pointerover", () => {
-            changeBorderButton.setAlpha(0.7);
-        });
-
-        changeBorderButton.on("pointerout", () => {
-            changeBorderButton.setAlpha(1);
-        });
-
-        changeBorderButton.on("pointerup", () => {
-            this.currentBorderStyleIndex =
-                (this.currentBorderStyleIndex + 1) % borderStyles.length;
-            this.drawBorder(
-                this.worksheetHeight - this.scene.scale.height * 0.02
-            );
-            // Thêm animation cho nút
-            this.addButtonAnimation(changeBorderButton);
-        });
-
         // Tạo nút "Reset Border" bằng GraphicsButton
         const resetBorderButton = new GraphicsButton({
             scene: this.scene,
@@ -394,7 +412,7 @@ export default class WorksheetView {
             width: buttonWidthResetBorder,
             height: buttonHeight,
             text: "Reset Border",
-            fontStyle: "Roboto",
+            fontStyle: "Nunito",
             fontSize: fontSize,
             textColor: "#ffffff",
             padding: 10,
@@ -426,10 +444,10 @@ export default class WorksheetView {
 
         // Thêm các nút vào buttonContainer
         this.buttonContainer!.add([
-            this.showAnswersButton,
             createButton,
-            exportButton,
+            this.showAnswersButton,
             changeBorderButton,
+            exportButton,
             resetBorderButton,
         ]);
     }

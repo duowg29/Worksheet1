@@ -31,7 +31,7 @@ export default class QuestionView {
                     y,
                     `${questionNumber})`,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -72,7 +72,7 @@ export default class QuestionView {
                     y - this.scene.scale.height * 0.01,
                     `${questionNumber})`,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -88,7 +88,7 @@ export default class QuestionView {
                     y - this.scene.scale.height * 0.01,
                     numerator1,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -107,7 +107,7 @@ export default class QuestionView {
                     y + this.scene.scale.height * 0.01,
                     denominator1,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -118,7 +118,7 @@ export default class QuestionView {
         this.container.add(
             this.scene.add
                 .text(fraction1X + this.scene.scale.width * 0.04, y, "and", {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#000",
                 })
@@ -133,7 +133,7 @@ export default class QuestionView {
                     y - this.scene.scale.height * 0.01,
                     numerator2,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -152,7 +152,7 @@ export default class QuestionView {
                     y + this.scene.scale.height * 0.01,
                     denominator2,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -173,7 +173,7 @@ export default class QuestionView {
                 y,
                 question.getAnswer(),
                 {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#FF0000", // Màu đỏ để phân biệt đáp án
                 }
@@ -208,7 +208,7 @@ export default class QuestionView {
                     y - this.scene.scale.height * 0.01,
                     `${questionNumber})`,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -224,7 +224,7 @@ export default class QuestionView {
                     y - this.scene.scale.height * 0.01,
                     numerator1,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -243,7 +243,7 @@ export default class QuestionView {
                     y + this.scene.scale.height * 0.01,
                     denominator1,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -254,7 +254,7 @@ export default class QuestionView {
         this.container.add(
             this.scene.add
                 .text(fraction1X + this.scene.scale.width * 0.03, y, "=", {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#000",
                 })
@@ -269,7 +269,7 @@ export default class QuestionView {
                     y - this.scene.scale.height * 0.01,
                     numerator2,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -288,7 +288,7 @@ export default class QuestionView {
                     y + this.scene.scale.height * 0.01,
                     denominator2,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -300,7 +300,7 @@ export default class QuestionView {
         this.container.add(
             this.scene.add
                 .text(variableX, y, variable, {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#000",
                 })
@@ -309,7 +309,7 @@ export default class QuestionView {
         this.container.add(
             this.scene.add
                 .text(variableX + this.scene.scale.width * 0.02, y, "=", {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#000",
                 })
@@ -328,7 +328,7 @@ export default class QuestionView {
                 y - this.scene.scale.height * 0.005,
                 question.getAnswer(),
                 {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#FF0000", // Màu đỏ để phân biệt đáp án
                 }
@@ -377,7 +377,7 @@ export default class QuestionView {
         this.container.add(
             this.scene.add
                 .text(x + width / 2, y + height / 2, data.topLeft.toString(), {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.018}px`,
                     color: "#000",
                 })
@@ -392,7 +392,7 @@ export default class QuestionView {
                 y + height / 2,
                 answer.topMiddle.toString(),
                 {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.018}px`,
                     color: "#FF0000", // Màu đỏ để phân biệt đáp án
                 }
@@ -404,7 +404,7 @@ export default class QuestionView {
 
         const topRightText = this.scene.add
             .text(x + width * 2.5, y + height / 2, answer.topRight.toString(), {
-                fontFamily: "Roboto",
+                fontFamily: "Nunito",
                 fontSize: `${this.scene.scale.width * 0.018}px`,
                 color: "#FF0000",
             })
@@ -420,7 +420,7 @@ export default class QuestionView {
                     y + height * 1.5,
                     data.bottomLeft.toString(),
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.018}px`,
                         color: "#000",
                     }
@@ -434,7 +434,7 @@ export default class QuestionView {
                 y + height * 1.5,
                 answer.bottomMiddle.toString(),
                 {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.018}px`,
                     color: "#FF0000",
                 }
@@ -450,7 +450,7 @@ export default class QuestionView {
                 y + height * 1.5,
                 answer.bottomRight.toString(),
                 {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.018}px`,
                     color: "#FF0000",
                 }

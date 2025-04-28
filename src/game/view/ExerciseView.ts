@@ -25,7 +25,7 @@ export default class ExerciseView {
                     yOffset,
                     `${exerciseNumber}. ${exercise.getTitle()}`,
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.025}px`,
                         color: "#000",
                         fontStyle: "bold",

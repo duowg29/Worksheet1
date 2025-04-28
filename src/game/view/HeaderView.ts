@@ -18,7 +18,7 @@ export default class HeaderView {
         this.container.add(
             this.scene.add
                 .text(xStart, yOffset, "Name:", {
-                    fontFamily: "Roboto",
+                    fontFamily: "Nunito",
                     fontSize: `${this.scene.scale.width * 0.02}px`,
                     color: "#000",
                 })
@@ -36,7 +36,7 @@ export default class HeaderView {
                     yOffset,
                     "Score:",
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -59,7 +59,7 @@ export default class HeaderView {
                     yOffset + lineHeight + this.scene.scale.height * 0.01,
                     "Teacher:",
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
@@ -82,7 +82,7 @@ export default class HeaderView {
                     yOffset + lineHeight + this.scene.scale.height * 0.01,
                     "Date:",
                     {
-                        fontFamily: "Roboto",
+                        fontFamily: "Nunito",
                         fontSize: `${this.scene.scale.width * 0.02}px`,
                         color: "#000",
                     }
