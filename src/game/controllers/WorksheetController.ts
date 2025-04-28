@@ -21,8 +21,13 @@ export default class WorksheetController {
         return this.worksheet;
     }
 
-    exportToPDF(): void {
+    exportToPDF(fileName: string): void {
         if (!this.worksheet) return;
-        this.exportService.exportToPDF();
+        this.exportService.exportToPDF(fileName);
+    }
+
+    exportToImage(fileName: string, format: "PNG" | "JPG"): void {
+        if (!this.worksheet) return;
+        this.exportService.exportToImage(fileName, format);
     }
 }

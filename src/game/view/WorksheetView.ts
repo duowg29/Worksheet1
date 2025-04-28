@@ -11,6 +11,7 @@ import {
     BorderStyle,
 } from "../view/BorderService";
 import { GraphicsButton } from "mct-common";
+import ExportPopup from "../services/ExportPopup";
 
 export default class WorksheetView {
     private scene: GamePlayScene;
@@ -163,9 +164,9 @@ export default class WorksheetView {
             text: this.showAnswersButtonText,
             fontStyle: "Roboto",
             fontSize: fontSize,
-            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            textColor: "#ffffff",
             padding: 10,
-            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            backgroundColor: "#1E90FF",
             shape: "rectangle",
             borderRadius: 10,
             cursor: "pointer",
@@ -297,9 +298,9 @@ export default class WorksheetView {
             text: "Export",
             fontStyle: "Roboto",
             fontSize: fontSize,
-            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            textColor: "#ffffff",
             padding: 10,
-            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            backgroundColor: "#1E90FF",
             shape: "rectangle",
             borderRadius: 10,
             cursor: "pointer",
@@ -317,7 +318,31 @@ export default class WorksheetView {
         });
 
         exportButton.on("pointerup", () => {
-            this.scene.getWorksheetController().exportToPDF();
+            // Xóa scene ExportPopup cũ nếu tồn tại
+            const existingPopup = this.scene.scene.get("ExportPopup");
+            if (existingPopup) {
+                this.scene.scene.remove("ExportPopup");
+            }
+
+            // Tạo scene ExportPopup mới
+            const exportPopup = new ExportPopup(
+                (fileName: string, format: string) => {
+                    const worksheetController =
+                        this.scene.getWorksheetController();
+                    if (format === "PDF") {
+                        worksheetController.exportToPDF(fileName);
+                    } else if (format === "PNG" || format === "JPG") {
+                        worksheetController.exportToImage(
+                            fileName,
+                            format as "PNG" | "JPG"
+                        );
+                    } else {
+                        console.error(`Unsupported format: ${format}`);
+                    }
+                }
+            );
+            this.scene.scene.add("ExportPopup", exportPopup, true);
+
             // Thêm animation cho nút
             this.addButtonAnimation(exportButton);
         });
@@ -332,9 +357,9 @@ export default class WorksheetView {
             text: "Change Border Style",
             fontStyle: "Roboto",
             fontSize: fontSize,
-            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            textColor: "#ffffff",
             padding: 10,
-            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            backgroundColor: "#1E90FF",
             shape: "rectangle",
             borderRadius: 10,
             cursor: "pointer",
@@ -371,9 +396,9 @@ export default class WorksheetView {
             text: "Reset Border",
             fontStyle: "Roboto",
             fontSize: fontSize,
-            textColor: "#ffffff", // Đồng bộ màu chữ trắng
+            textColor: "#ffffff",
             padding: 10,
-            backgroundColor: "#1E90FF", // Đồng bộ màu nền xanh
+            backgroundColor: "#1E90FF",
             shape: "rectangle",
             borderRadius: 10,
             cursor: "pointer",

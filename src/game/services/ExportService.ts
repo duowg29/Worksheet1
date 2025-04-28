@@ -8,7 +8,7 @@ export default class ExportService {
         this.scene = scene;
     }
 
-    exportToPDF(): void {
+    exportToPDF(fileName: string): void {
         const container = this.scene.getWorksheetContainer();
         const buttonContainer = this.scene.getButtonContainer();
         if (!container) {
@@ -135,9 +135,84 @@ export default class ExportService {
                     }
                 }
 
-                pdf.save("equivalent_ratios_worksheet.pdf");
+                pdf.save(`${fileName}.pdf`);
 
                 // Khôi phục buttonContainer sau khi chụp ảnh
+                if (buttonContainer) {
+                    buttonContainer.setVisible(true);
+                }
+            }
+        );
+    }
+
+    exportToImage(fileName: string, format: "PNG" | "JPG"): void {
+        const container = this.scene.getWorksheetContainer();
+        const buttonContainer = this.scene.getButtonContainer();
+        if (!container) {
+            console.error("Worksheet container not found");
+            return;
+        }
+
+        // Ẩn buttonContainer trước khi chụp ảnh
+        if (buttonContainer) {
+            buttonContainer.setVisible(false);
+        }
+
+        this.scene.game.renderer.snapshot(
+            (snapshot: Phaser.Display.Color | HTMLImageElement) => {
+                if (!(snapshot instanceof HTMLImageElement)) {
+                    console.error(
+                        "Snapshot is not an HTMLImageElement:",
+                        snapshot
+                    );
+                    if (buttonContainer) {
+                        buttonContainer.setVisible(true);
+                    }
+                    return;
+                }
+
+                const borderOffsetX = this.scene.scale.width * 0.01;
+                const borderOffsetY = this.scene.scale.height * 0.01;
+                const totalHeight = this.scene.getWorksheetHeight();
+                const containerX = borderOffsetX;
+                const containerY = borderOffsetY;
+                const containerWidth = this.scene.scale.width * 0.98;
+                const containerHeight = totalHeight;
+
+                const canvas = document.createElement("canvas");
+                canvas.width = containerWidth;
+                canvas.height = containerHeight;
+                const ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    console.error("Cannot get canvas context");
+                    if (buttonContainer) {
+                        buttonContainer.setVisible(true);
+                    }
+                    return;
+                }
+
+                ctx.drawImage(
+                    snapshot,
+                    containerX,
+                    containerY,
+                    containerWidth,
+                    containerHeight,
+                    0,
+                    0,
+                    containerWidth,
+                    containerHeight
+                );
+
+                // Tạo link tải về
+                const dataUrl = canvas.toDataURL(
+                    `image/${format.toLowerCase()}`
+                );
+                const link = document.createElement("a");
+                link.href = dataUrl;
+                link.download = `${fileName}.${format.toLowerCase()}`;
+                link.click();
+
+                // Khôi phục buttonContainer
                 if (buttonContainer) {
                     buttonContainer.setVisible(true);
                 }
