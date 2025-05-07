@@ -1,18 +1,15 @@
 sửa lại font chữ sang nunito (tải xuống dùng chứ không dẫn link)
 dùng module common cho button
 dùng module common để hiện popup cho người dùng chọn khi bấm xuất file
-đề xuất cải tiến (Cho người dùng thêm nút để lựa chọn số câu hỏi mỗi bài, cân nhắc để in ra trang thứ 2 nếu in vượt(thêm cái masked để di lên xuống hiển thị thông tin hiện tại))
 
 CHEATSHEET 			
 -nên cố định sẵn một số form chung giữa các worksheet
--có nên thêm nút để người dùng chọn theme cho khung (Thay đổi ngoại hình các khung )
--thêm tính năng toggle đáp án cho sheet.
 -dùng toàn bộ là tiếng việt 
 -dùng watermark tùy í(tham khảo trên web, để opacity thấp thôi)
 -sẽ có những thuộc tính như dạng toán- số bài -> lấy api gen ra
 
 WORKSHEET
-- 2 trục x y sẽ theo màu GRADIENT
-- Số càng lớn thì mã màu càng đậm
-- phải là bảng từ 0 đến 12
 - thêm nút để bật tắt mã màu  ( một là có màu, 2 là không có màu tức đen trắng)
+- khi in ra thì phải để worksheet được kín trang, chứ không để trống chỗ Button được 
+- phải cho phép export nhiều loại cùng lúc, để nút export vào bên cạnh mỗi loại.
+- đổi biến cho các bài 3 thành abcdef
